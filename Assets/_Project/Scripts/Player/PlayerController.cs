@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravity = -19.62f;
     [SerializeField] private LayerMask groundMask;
 
+    [Header("Combat")]
+    [SerializeField] private WeaponHandler weaponHandler;
+
     [Header("Double Tap Dodge")]
     [SerializeField] private float doubleTapWindow = 0.3f;
     [SerializeField] private float dodgeRollSpeed = 15f;
@@ -141,22 +144,19 @@ public class PlayerController : MonoBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        // TODO: Trigger light attack - will be implemented in Combat System
-        Debug.Log("Light Attack");
+        weaponHandler?.LightAttack(_moveInput);
     }
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        // TODO: Trigger heavy attack - will be implemented in Combat System
-        Debug.Log("Heavy Attack");
+        weaponHandler?.HeavyAttack(_moveInput);
     }
 
     public void OnBlock(InputAction.CallbackContext context)
     {
         _isBlocking = context.ReadValueAsButton();
-        // TODO: Trigger block animation - will be implemented in Combat System
-        Debug.Log("Blocking: " + _isBlocking);
+        weaponHandler?.Block(_isBlocking);
     }
 
     public void OnInteract(InputAction.CallbackContext context)
