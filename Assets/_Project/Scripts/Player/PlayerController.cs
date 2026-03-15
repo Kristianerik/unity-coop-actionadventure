@@ -72,6 +72,7 @@ public class PlayerController : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _cameraTransform = Camera.main.transform;
+        cameraController = Camera.main.GetComponent<CameraController>();
     }
 
     private void Update()
@@ -92,6 +93,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext context)
     {
+        _lookInput = context.ReadValue<Vector2>();
+        cameraController?.OnLook(context);
+
         _lookInput = context.ReadValue<Vector2>();
         cameraController?.OnLook(context);
     }
@@ -149,8 +153,16 @@ public class PlayerController : MonoBehaviour
 
     public void OnHeavyAttack(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
-        weaponHandler?.HeavyAttack(_moveInput);
+        if (context.started)
+        {
+            weaponHandler?.HeavyAttack(_moveInput);
+        }
+        
+
+        if (context.canceled) 
+        {
+            weaponHandler?.CancelCharge();
+        }
     }
 
     public void OnBlock(InputAction.CallbackContext context)
@@ -208,7 +220,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 spherePosition = new Vector3(
             transform.position.x,
-            transform.position.y - 0.9f,
+            transform.position.y + 0.1f,
             transform.position.z
         );
 
@@ -217,6 +229,7 @@ public class PlayerController : MonoBehaviour
             0.4f,
             groundMask
         );
+
     }
 
     private void HandleRotation()
@@ -269,6 +282,7 @@ public class PlayerController : MonoBehaviour
     private void UpdateAnimator()
     {
         if (_animator == null) return;
+        if (_animator.runtimeAnimatorController == null) return;
 
         float speed = new Vector3(
             _controller.velocity.x, 0f, _controller.velocity.z

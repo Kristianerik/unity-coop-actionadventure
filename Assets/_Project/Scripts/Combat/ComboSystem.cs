@@ -17,6 +17,7 @@ public class ComboSystem : MonoBehaviour
     private bool _isAttacking = false;
     private bool _comboWindowOpen = false;
     private float _attackTimer = 0f;
+    private bool _hitboxActive = false;
 
     // Queued input
     private bool _nextAttackQueued = false;
@@ -110,6 +111,7 @@ public class ComboSystem : MonoBehaviour
         _attackTimer = 0f;
         _comboWindowOpen = false;
         _nextAttackQueued = false;
+        _hitboxActive = false;
 
         meleeHitbox?.SetDamage(attack.damage);
         meleeHitbox?.SetKnockback(attack.knockbackForce);
@@ -130,25 +132,28 @@ public class ComboSystem : MonoBehaviour
 
         // Open/close combo window
         _comboWindowOpen = _attackTimer >= current.comboWindowStart &&
-                           _attackTimer < current.comboWindowEnd;
+                        _attackTimer < current.comboWindowEnd;
 
-        // Activate hitbox during active frames
-        if (_attackTimer <= current.duration * 0.5f)
+        // Activate hitbox only once when entering active frames
+        float activeFramesEnd = current.duration * 0.5f;
+        if (_attackTimer <= activeFramesEnd && !_hitboxActive)
+        {
+            _hitboxActive = true;
             meleeHitbox?.ActivateHitbox();
-        else
+        }
+        else if (_attackTimer > activeFramesEnd && _hitboxActive)
+        {
+            _hitboxActive = false;
             meleeHitbox?.DeactivateHitbox();
+        }
 
         // Try to continue combo
         if (_attackTimer >= current.comboWindowEnd)
         {
             if (_nextAttackQueued)
-            {
                 TryContinueCombo();
-            }
             else if (_attackTimer >= current.duration)
-            {
                 EndCombo();
-            }
         }
     }
 

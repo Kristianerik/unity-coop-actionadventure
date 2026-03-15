@@ -23,6 +23,7 @@ public class HealthSystem : MonoBehaviour
     {
         if (_isDead) return;
 
+        Debug.Log($"{gameObject.name} took {amount} damage! HP: {currentHealth - amount}/{maxHealth}");
         currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
         OnDamageTaken?.Invoke(knockback);

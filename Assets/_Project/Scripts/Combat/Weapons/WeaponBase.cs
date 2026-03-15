@@ -23,6 +23,7 @@ public abstract class WeaponBase : MonoBehaviour
     public abstract void Block(bool isBlocking);
     public abstract bool IsAttacking();
 
+    public virtual void CancelCharge() {}
     public virtual void OnEquip() {}
     public virtual void OnUnequip() {}
 }

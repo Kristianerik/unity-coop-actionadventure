@@ -24,6 +24,11 @@ public class WeaponHandler : MonoBehaviour
         equippedWeapon?.HeavyAttack(moveInput);
     }
 
+    public void CancelCharge()
+    {
+        equippedWeapon?.CancelCharge();
+    }
+    
     public void Block(bool isBlocking)
     {
         equippedWeapon?.Block(isBlocking);

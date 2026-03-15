@@ -1,3 +1,5 @@
+using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 
 public class GunWeapon : WeaponBase
@@ -10,10 +12,18 @@ public class GunWeapon : WeaponBase
     [SerializeField] private int maxAmmo = 30;
     [SerializeField] private float reloadTime = 1.5f;
 
+    [Header("Charged Shot")]
+    [SerializeField] private float chargeTime = 0.8f;
+    [SerializeField] private float chargedDamageMultiplier = 3f;
+    [SerializeField] private float chargedBulletScale = 2f;
+
     private int _currentAmmo;
     private float _fireRateTimer = 0f;
     private bool _isReloading = false;
     private bool _isAttacking = false;
+    private bool _isCharging = false;
+    private float _chargeTimer = 0f;
+    private float _chargePercent = 0f;
 
     private void Awake()
     {
@@ -35,7 +45,48 @@ public class GunWeapon : WeaponBase
 
     public override void HeavyAttack(Vector2 moveInput)
     {
+        if (!_isCharging && !_isReloading && _fireRateTimer <= 0f)
+        {
+            _isCharging = true;
+            _chargeTimer = 0f;
+            _chargePercent = 0f;
+            StartCoroutine(ChargeShot());
+            Debug.Log("Charging shot...");
+        }
+    }
+
+    private IEnumerator ChargeShot()
+    {
+        while (_isCharging)
+        {
+            _chargeTimer += Time.deltaTime;
+            _chargePercent = Mathf.Clamp01(_chargeTimer / chargeTime);
+            Debug.Log($"Charge: {(_chargePercent * 100f):0}%");
+
+            // Auto fire at full charge
+            if (_chargePercent >= 1f)
+            {
+                _isCharging = false;
+                TryShoot(isCharged: true);
+                _chargeTimer = 0f;
+                _chargePercent = 0f;
+                Debug.Log("Auto fired at full charge!");
+                yield break; // exit the coroutine
+            }
+
+            yield return null;
+        }
+    }
+
+    public override void CancelCharge()
+    {
+        Debug.Log("GunWeapon CancelCharge called - isCharging: " + _isCharging);
+        if (!_isCharging) return;
+
+        _isCharging = false;
         TryShoot(isCharged: true);
+        _chargeTimer = 0f;
+        _chargePercent = 0f;
     }
 
     public override void Block(bool isBlocking)
@@ -56,7 +107,7 @@ public class GunWeapon : WeaponBase
             return;
         }
 
-        TryShoot(isCharged);
+        Shoot(isCharged);
     }
 
     private void Shoot(bool isCharged)
@@ -66,17 +117,41 @@ public class GunWeapon : WeaponBase
 
         if (bulletPrefab != null && firePoint != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            GameObject bullet = Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                firePoint.rotation
+            );
+
+            float damage;
+            float scale;
+
+            if (isCharged)
+            {
+                // Scale damage and size based on charge percent
+                damage = Mathf.Lerp(
+                    lightAttackDamage,
+                    lightAttackDamage * chargedDamageMultiplier,
+                    _chargePercent
+                );
+                scale = Mathf.Lerp(1f, chargedBulletScale, _chargePercent);
+                bullet.transform.localScale *= scale;
+                Debug.Log($"Shot fired! Charge: {(_chargePercent * 100f):0}% | Damage: {damage:0.0} | Scale: {scale:0.00}");
+            }
+            else
+            {
+                damage = lightAttackDamage;
+                Debug.Log($"Normal shot fired! Damage: {damage} | Ammo: {_currentAmmo}/{maxAmmo}");
+            }
+
             if (bullet.TryGetComponent<Bullet>(out var b))
             {
-                float damage = isCharged ? heavyAttackDamage : lightAttackDamage;
                 b.Initialize(Owner, damage, bulletSpeed);
             }
         }
 
         string trigger = isCharged ? "HeavyShot" : "LightShot";
         playerAnimator?.SetTrigger(trigger);
-        Debug.Log($"ShotFired! Ammo: {_currentAmmo}/{maxAmmo}");
     }
 
     private System.Collections.IEnumerator Reload()
