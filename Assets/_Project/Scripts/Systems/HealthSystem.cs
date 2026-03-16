@@ -42,7 +42,7 @@ public class HealthSystem : MonoBehaviour
     }
 
     public float GetHealthPercent () => currentHealth / maxHealth;
-    public bool isDead() => _isDead;
+    public bool IsDead() => _isDead;
 
     private void Die()
     {
