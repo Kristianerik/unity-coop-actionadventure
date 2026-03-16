@@ -24,7 +24,8 @@ public class Bullet : MonoBehaviour
     {
         if (other.gameObject == _owner) { return; }
 
-        if (other.TryGetComponent<HealthSystem>(out var health))
+        HealthSystem health = other.GetComponentInParent<HealthSystem>();
+        if (health != null)
         {
             Vector3 knockback = transform.forward * 3f;
             health.TakeDamage(_damage, knockback);

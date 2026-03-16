@@ -118,10 +118,10 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &29012975 stripped
+--- !u!4 &150784325 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3525138149490751992, guid: 40786fd9654977c46acb64f42833301e, type: 3}
-  m_PrefabInstance: {fileID: 1935199816}
+  m_PrefabInstance: {fileID: 1334629682}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cbcf493209aab94c8b42c24aee410fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 29012975}
+  target: {fileID: 150784325}
   offset: {x: 0.5, y: 1.5, z: -4}
   sensitivityX: 0.1
   sensitivityY: 0.1
@@ -591,7 +591,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1935199816
+--- !u!1001 &1334629682
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -599,6 +599,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 385507263171055727, guid: 40786fd9654977c46acb64f42833301e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3525138149490751992, guid: 40786fd9654977c46acb64f42833301e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -639,13 +643,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5089926643522916484, guid: 40786fd9654977c46acb64f42833301e, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 64
+    - target: {fileID: 5174583749822272982, guid: 40786fd9654977c46acb64f42833301e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5855663486112140809, guid: 40786fd9654977c46acb64f42833301e, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7558844051947698630, guid: 40786fd9654977c46acb64f42833301e, type: 3}
       propertyPath: m_Name
       value: Player_Gunner
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558844051947698630, guid: 40786fd9654977c46acb64f42833301e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560554635445309516, guid: 40786fd9654977c46acb64f42833301e, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -660,4 +676,4 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 471475441}
-  - {fileID: 1935199816}
+  - {fileID: 1334629682}
