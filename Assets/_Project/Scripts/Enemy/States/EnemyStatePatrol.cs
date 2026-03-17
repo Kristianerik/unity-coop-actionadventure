@@ -18,8 +18,8 @@ public class EnemyStatePatrol : EnemyStateBase
 
     public override void Update()
     {
-        // Check for player furst
-        if (Enemy.IsTargetDetected())
+        // Check for player first
+        if (Enemy.IsTargetDetected() || Enemy.Aggro.IsInCombat())
         {
             Enemy.ChangeState(Enemy.ChaseState);
             return;

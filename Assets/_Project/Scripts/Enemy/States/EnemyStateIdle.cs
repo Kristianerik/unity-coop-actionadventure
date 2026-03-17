@@ -20,7 +20,7 @@ public class EnemyStateIdle : EnemyStateBase
         _idleTimer += Time.deltaTime;
 
         // Check for player
-        if (Enemy.IsTargetDetected())
+        if (Enemy.IsTargetDetected() || Enemy.Aggro.IsInCombat())
         {
             Enemy.ChangeState(Enemy.ChaseState);
             return;

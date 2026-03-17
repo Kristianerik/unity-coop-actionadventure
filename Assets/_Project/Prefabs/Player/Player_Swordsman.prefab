@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4285916627652538881}
   - component: {fileID: 2624398976164419611}
   - component: {fileID: 4407529884639455181}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MeleeHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ GameObject:
   - component: {fileID: 6724080666434338736}
   - component: {fileID: 2026659733117002392}
   - component: {fileID: 8778422044675626659}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 2513480344659371567}
   - component: {fileID: 3966672358081001099}
   - component: {fileID: 7269138691471507917}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player_Swordsman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,7 +534,7 @@ GameObject:
   - component: {fileID: 5673445013874811747}
   - component: {fileID: 82813472268844512}
   - component: {fileID: 2459406542082088228}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -652,7 +652,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 446866344566596793}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WeaponPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

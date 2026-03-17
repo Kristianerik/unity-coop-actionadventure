@@ -47,7 +47,7 @@ public class EnemyStateAttack : EnemyStateBase
             if (health != null)
             {
                 Vector3 knockback = (target.position - Enemy.transform.position).normalized * Enemy.AttackKnockback;
-                health.TakeDamage(Enemy.AttackDamage, knockback);
+                health.TakeDamage(Enemy.AttackDamage, knockback, Enemy.gameObject);
             }
         }
     }

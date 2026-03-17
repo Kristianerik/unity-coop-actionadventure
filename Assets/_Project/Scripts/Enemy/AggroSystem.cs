@@ -8,16 +8,15 @@ public class AggroSystem : MonoBehaviour
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float aggroUpdateInterval = 1f;
     [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private float threatDecayRate = 2f;
+    [SerializeField] private float minCombatDuration = 5f;
 
     private List<Transform> _players = new List<Transform>();
+    private Dictionary<Transform, float> _threatTable = new Dictionary<Transform, float>();
     private Transform _currentTarget;
     private float _aggroUpdateTimer;
-
-    // Static registry of all aggro systems for split aggro
-    private static List<AggroSystem> _allAggroSystems = new List<AggroSystem>();
-
-    private void OnEnable() => _allAggroSystems.Add(this);
-    private void OnDisable() => _allAggroSystems.Remove(this);
+    private float _combatTimer = 0f;
+    private bool _isInCombat = false;
 
     private void Start()
     {
@@ -32,6 +31,8 @@ public class AggroSystem : MonoBehaviour
             _aggroUpdateTimer = 0f;
             UpdateTarget();
         }
+
+        DecayThreat();
     }
 
     private void RefreshPlayerList()
@@ -56,58 +57,144 @@ public class AggroSystem : MonoBehaviour
             return;
         }
 
-        _players.RemoveAll(p => p == null || (p.GetComponentInParent<HealthSystem>()?.IsDead() ?? true));
+        // Clean dead players from threat table
+        List<Transform> deadPlayers = new List<Transform>();
+        foreach (var kvp in _threatTable)
+        {
+            // Check for null before accessing any components
+            if (kvp.Key == null)
+            {
+                deadPlayers.Add(kvp.Key);
+                continue;
+            }
+
+            HealthSystem health = kvp.Key.GetComponentInParent<HealthSystem>();
+            if (health?.IsDead() ?? true)
+            {
+                deadPlayers.Add(kvp.Key);
+            }
+        }
+
+        foreach (var dead in deadPlayers)
+        {
+            _threatTable.Remove(dead);
+        }
 
         if (_players.Count == 0) return;
 
-        _currentTarget = GetLeastTargetedPlayer();
+        // Priority 1 Target highest threat player (combat aggro)
+        if (_threatTable.Count > 0)
+        {
+            UpdateThreatTarget();
+            return;
+        }
+
+        //Priority 2 Target nearest player (detection aggro)
+        _currentTarget = GetNearestPlayer();
+
     }
 
-    private Transform GetLeastTargetedPlayer()
+    private Transform GetNearestPlayer()
     {
-        // Count how many enemies are targeting each player
-        Dictionary<Transform, int> targetCount = new Dictionary<Transform, int>();
+        Transform nearest = null;
+        float closestDistance = float.MaxValue;
 
         foreach (var player in _players)
         {
-            HealthSystem health = player.GetComponentInParent<HealthSystem>();
-            if (health?.IsDead() ?? true) continue;
-            targetCount[player] = 0;
-        }
-
-        foreach (var aggro in _allAggroSystems)
-        {
-            if (aggro == this) continue;
-            if (aggro._currentTarget != null && targetCount.ContainsKey(aggro._currentTarget))
+            float distance = Vector3.Distance(transform.position, player.position);
+            if (distance < closestDistance)
             {
-                targetCount[aggro._currentTarget]++;
-            }
-        }
-
-        // Find the player with the least targets
-        // If tied. Pick closest one
-        Transform bestTarget = null;
-        int lowestCount = int.MaxValue;
-        float closestDistance = float.MaxValue;
-
-        foreach (var kvp in targetCount)
-        {
-            float distance = Vector3.Distance(transform.position, kvp.Key.position);
-
-            if (kvp.Value < lowestCount || (kvp.Value == lowestCount && distance < closestDistance))
-            {
-                lowestCount = kvp.Value;
                 closestDistance = distance;
-                bestTarget = kvp.Key;
+                nearest = player;
             }
         }
 
-        return bestTarget;
+        return nearest;
+    }
+
+    public void RegisterThreat(Transform attacker, float threatAmount)
+    {
+        if (attacker == null) return;
+
+        if (!_players.Contains(attacker))
+        {
+            _players.Add(attacker);
+        }
+
+        if (_threatTable.ContainsKey(attacker))
+        {
+            _threatTable[attacker] += threatAmount;
+        }
+        else
+        {
+            _threatTable[attacker] = threatAmount;
+        }
+
+        // Start combat timer
+        _isInCombat = true;
+        _combatTimer = minCombatDuration;
+
+        // Update target to highest threat 
+        UpdateThreatTarget();
+        Debug.Log($"{gameObject.name} received threat from {attacker.name} | Threat: {_threatTable[attacker]}");
+    }
+
+    private void UpdateThreatTarget()
+    {
+        if (_threatTable.Count == 0) return;
+
+        Transform highestThreatTarget = null;
+        float highestThreat = 0f;
+
+        foreach (var kvp in _threatTable)
+        {
+            // Skip dead players
+            HealthSystem health = kvp.Key.GetComponentInParent<HealthSystem>();
+            if (health?.IsDead() ?? true) continue;
+
+            if (kvp.Value > highestThreat)
+            {
+                highestThreat = kvp.Value;
+                highestThreatTarget = kvp.Key;
+            }
+        }
+
+        if (highestThreatTarget != null)
+        {
+            _currentTarget = highestThreatTarget;
+        }
+    }
+
+    private void DecayThreat()
+    {
+        // Count down combat timer
+        if (_combatTimer >0f)
+        {
+            _combatTimer -= Time.deltaTime;
+            if (_combatTimer <= 0f)
+            {
+                _isInCombat = false;
+            }
+        }
+
+        // Only decay threat when combat timer has expired
+        if (_isInCombat) return;
+
+        List<Transform> keys = new List<Transform>(_threatTable.Keys);
+        foreach (var key in keys)
+        {
+            _threatTable[key] -= threatDecayRate * Time.deltaTime;
+            if (_threatTable[key] == 0)
+            {
+                _threatTable.Remove(key);
+            }
+        }
     }
 
     public Transform GetCurrentTarget() => _currentTarget;
     public float GetDetectionRange() => detectionRange;
     public bool HasTarget() => _currentTarget != null;
+    public bool IsInCombat() => _isInCombat;
 
     private void OnDrawGizmosSelected()
     {

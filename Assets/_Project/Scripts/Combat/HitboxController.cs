@@ -45,7 +45,7 @@ public class HitboxController : MonoBehaviour
             Debug.Log($"Dealing damage to {other.transform.root.name}");
             _alreadyHit.Add(other);
             Vector3 knockbackDir = (other.transform.position - _owner.transform.position).normalized;
-            health.TakeDamage(damage, knockbackDir * knockbackForce);
+            health.TakeDamage(damage, knockbackDir * knockbackForce, _owner);
         }
         else
         {

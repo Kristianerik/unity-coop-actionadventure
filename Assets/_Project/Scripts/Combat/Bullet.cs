@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour
         if (health != null)
         {
             Vector3 knockback = transform.forward * 3f;
-            health.TakeDamage(_damage, knockback);
+            health.TakeDamage(_damage, knockback, _owner);
         }
         
         Destroy(gameObject);

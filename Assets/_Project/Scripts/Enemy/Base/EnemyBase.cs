@@ -1,4 +1,5 @@
 using System.Numerics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using Vector3 = UnityEngine.Vector3;
@@ -117,6 +118,15 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void OnDamageTaken(Vector3 Knockback)
     {
+        if (Health.IsDead()) return;
+
+        // Always chase attacker if currently idle or patrolling
+        if (StateMachine.CurrentState == IdleState || StateMachine.CurrentState == PatrolState)
+        {
+            StateMachine.ChangeState(ChaseState);
+            return;
+        }
+
         // Chance to dodge on taking damage
         if (!Health.IsDead() && Random.value < 0.3f)
         {

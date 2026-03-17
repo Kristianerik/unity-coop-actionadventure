@@ -13,7 +13,8 @@ public class EnemyStateChase : EnemyStateBase
 
     public override void Update()
     {
-        if (Enemy.HasLostTarget())
+        // Only return to patrol if oput of range AND not in combat
+        if (Enemy.HasLostTarget() && !Enemy.Aggro.IsInCombat())
         {
             Enemy.ChangeState(Enemy.PatrolState);
             return;

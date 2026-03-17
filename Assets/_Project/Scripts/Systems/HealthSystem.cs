@@ -19,7 +19,7 @@ public class HealthSystem : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-    public void TakeDamage(float amount, Vector3 knockback = default)
+    public void TakeDamage(float amount, Vector3 knockback = default, GameObject attacker = null)
     {
         if (_isDead) return;
 
@@ -27,6 +27,13 @@ public class HealthSystem : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
         OnDamageTaken?.Invoke(knockback);
+
+        // Register threat if attacker provided
+        if (attacker != null)
+        {
+            AggroSystem aggro = GetComponent<AggroSystem>();
+            aggro?.RegisterThreat(attacker.transform, amount);
+        }
 
         if (currentHealth <= 0f)
         {
