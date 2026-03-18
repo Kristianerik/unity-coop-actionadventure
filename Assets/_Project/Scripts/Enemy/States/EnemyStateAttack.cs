@@ -6,6 +6,7 @@ public class EnemyStateAttack : EnemyStateBase
     private float _attackTimer = 0f;
     private float _attackDuration = 0.8f;
     private bool _hasDealtDamage = false;
+    private bool _hitboxActive = false;
 
     public EnemyStateAttack(EnemyBase enemy) : base(enemy) { }
 
@@ -14,21 +15,51 @@ public class EnemyStateAttack : EnemyStateBase
         Enemy.Agent.isStopped = true;
         _attackTimer = 0f;
         _hasDealtDamage = false;
+        _hitboxActive = false;
         Enemy.EnemyAnimator?.SetTrigger("Attack");
+
+        // Face the target
+        if (Enemy.Aggro.HasTarget())
+        {
+            Vector3 direction = (Enemy.Aggro.GetCurrentTarget().position - Enemy.transform.position).normalized;
+            direction.y = 0f;
+            if (direction != Vector3.zero)
+            {
+                Enemy.transform.rotation = Quaternion.LookRotation(direction);
+            }
+        }
     }
 
     public override void Update()
     {
         _attackTimer += Time.deltaTime;
+        float activeFramesEnd = _attackDuration * 0.5f;
 
-        // Deal damage at midpoint of attack animation
-        if (!_hasDealtDamage && _attackTimer >= _attackDuration * 0.5f)
+        // Activate hitbox if melee enemy
+        if (Enemy is MeleeEnemy meleeEnemy && meleeEnemy.MeleeHitbox != null)
         {
-            _hasDealtDamage = true;
-            TryDealDamage();
+            if (_attackTimer <= activeFramesEnd && !_hitboxActive)
+            {
+                _hitboxActive = true;
+                meleeEnemy.MeleeHitbox.ActivateHitbox();
+            }
+            else if (_attackTimer > activeFramesEnd && _hitboxActive)
+            {
+                _hitboxActive = false;
+                meleeEnemy.MeleeHitbox.DeactivateHitbox();
+            }
+        }
+        else 
+        {
+            // Fallback range check for enemies without hitbox
+            if (!_hasDealtDamage && _attackTimer >= _attackDuration * 0.5f) 
+            {
+                _hasDealtDamage = true;
+                TryDealDamage();
+            }
         }
 
-        // Return to chase state affet attack completed
+        // Return to chase state affer attack completed
         if (_attackTimer >= _attackDuration)
         {
             Enemy.AttackCooldownTimer = Enemy.AttackCooldown;
@@ -54,6 +85,11 @@ public class EnemyStateAttack : EnemyStateBase
 
     public override void Exit()
     {
+        // Make sure hitbox is deactivated
+        if (Enemy is MeleeEnemy meleeEnemy)
+        {
+            meleeEnemy.MeleeHitbox?.DeactivateHitbox();
+        }
         Enemy.Agent.isStopped = false;
     }
     
