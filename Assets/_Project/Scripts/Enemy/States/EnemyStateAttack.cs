@@ -3,8 +3,8 @@ using UnityEngine;
 public class EnemyStateAttack : EnemyStateBase
 {
 
-    private float _attackTimer = 0f;
-    private float _attackDuration = 0.8f;
+    protected float _attackTimer = 0f;
+    protected float _attackDuration = 0.8f;
     private bool _hasDealtDamage = false;
     private bool _hitboxActive = false;
 

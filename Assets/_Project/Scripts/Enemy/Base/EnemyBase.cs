@@ -38,13 +38,13 @@ public class EnemyBase : MonoBehaviour
     public EnemyStateMachine StateMachine;
 
     // States
-    public EnemyStateIdle IdleState { get; private set; }
-    public EnemyStatePatrol PatrolState { get; private set; }
-    public EnemyStateChase ChaseState { get; private set; }
-    public EnemyStateAttack AttackState { get; private set; }
-    public EnemyStateDodge DodgeState { get; private set; }
-    public EnemyStateStunned StunnedState { get; private set; }
-    public EnemyStateDeath DeatghState { get; private set; }
+    public EnemyStateIdle IdleState { get; protected set; }
+    public EnemyStatePatrol PatrolState { get; protected set; }
+    public EnemyStateChase ChaseState { get; protected set; }
+    public EnemyStateAttack AttackState { get; protected set; }
+    public EnemyStateDodge DodgeState { get; protected set; }
+    public EnemyStateStunned StunnedState { get; protected set; }
+    public EnemyStateDeath DeatghState { get; protected set; }
 
     // Timers
     public float AttackCooldownTimer { get; set; }
