@@ -48,8 +48,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3
-  m_Acceleration: 8
+  m_Speed: 4
+  m_Acceleration: 12
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 6
@@ -105,20 +105,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a5b83349c0c56a44bef2188e6958fa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 15
-  attackRange: 10
-  loseAggroRange: 20
+  detectionRange: 20
+  attackRange: 15
+  loseAggroRange: 25
   attackDamage: 10
   attackCoolDown: 1.5
   attackKnockback: 3
-  moveSpeed: 3.5
+  moveSpeed: 4
   chaseSpeed: 5
   patrolPoints: []
   patrolWaitTime: 2
   projectilePrefab: {fileID: 6271811319988869330, guid: 3ba17c1a2d2292c4db41008db166b221, type: 3}
   firePoint: {fileID: 7900559348503046848}
-  preferredRange: 8
-  minRange: 4
+  preferredRange: 12
+  minRange: 8
 --- !u!95 &5053632620497230225
 Animator:
   serializedVersion: 7

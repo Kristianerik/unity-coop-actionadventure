@@ -25,32 +25,25 @@ public class RangedChaseState : EnemyStateChase
 
         float distanceToTarget = Vector3.Distance(Enemy.transform.position, Enemy.Aggro.GetCurrentTarget().position);
 
-        // Target too close - back away
+        // Target too close - retreat 
         if (distanceToTarget < _rangedEnemy.MinRange)
         {
             Vector3 awayFromTarget = (Enemy.transform.position - Enemy.Aggro.GetCurrentTarget().position).normalized;
-            Enemy.Agent.SetDestination(Enemy.transform.position + awayFromTarget * 3f);
-            return;
+            Enemy.Agent.SetDestination(Enemy.transform.position + awayFromTarget * 8f);
         }
 
-        // In attack range - attack
-        if (distanceToTarget <= _rangedEnemy.AttackRange && Enemy.AttackCooldownTimer <= 0f)
+        // Always shoot off cooldown when in attack range
+        if (Enemy.AttackCooldownTimer <= 0f && distanceToTarget <= _rangedEnemy.AttackRange)
         {
             Enemy.ChangeState(Enemy.AttackState);
             return;
-        }        
-
-        // Too far - move to preferred range
-        if (distanceToTarget > _rangedEnemy.PreferredRange)
-        {
-            Enemy.Agent.SetDestination(Enemy.Aggro.GetCurrentTarget().position);
-            return;
         }
 
-        // At preferred range - strafe sideways
-        Vector3 toTarget = (Enemy.Aggro.GetCurrentTarget().position - Enemy.transform.position).normalized;
-        Vector3 strafeDir = Vector3.Cross(toTarget, Vector3.up).normalized;
-        if (Random.value > 0.5f) strafeDir = -strafeDir;
-        Enemy.Agent.SetDestination(Enemy.transform.position + strafeDir * 2f);
+        // Target too far - move closer
+        if (distanceToTarget > _rangedEnemy.PreferredRange)
+        {
+            
+            Enemy.Agent.SetDestination(Enemy.Aggro.GetCurrentTarget().position);
+        }
     }
 }
