@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class EnemyStateBase
+public abstract class EnemyStateBase : IEnemyState
 {
     
     protected EnemyBase Enemy;

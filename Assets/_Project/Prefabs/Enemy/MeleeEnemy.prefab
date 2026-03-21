@@ -338,6 +338,7 @@ MonoBehaviour:
   attackRange: 2
   loseAggroRange: 15
   attackDamage: 15
+  damageMultiplier: 1
   attackCoolDown: 1.2
   attackKnockback: 6
   moveSpeed: 4
@@ -378,7 +379,7 @@ GameObject:
   - component: {fileID: 4200930216132505408}
   - component: {fileID: 4495823366233612176}
   - component: {fileID: 4813236932997273611}
-  m_Layer: 7
+  m_Layer: 10
   m_Name: MeleeHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

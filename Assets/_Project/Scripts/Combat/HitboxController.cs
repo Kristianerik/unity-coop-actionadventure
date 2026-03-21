@@ -37,7 +37,7 @@ public class HitboxController : MonoBehaviour
     {
         if (!_isActive) return;
         if(_alreadyHit.Contains(other)) return;
-        if (other.gameObject == _owner) return; 
+        if (other.gameObject == _owner) return;
 
         HealthSystem health = other.GetComponentInParent<HealthSystem>();
         if (health != null)

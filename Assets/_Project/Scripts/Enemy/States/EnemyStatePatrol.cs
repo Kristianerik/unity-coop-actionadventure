@@ -18,6 +18,12 @@ public class EnemyStatePatrol : EnemyStateBase
 
     public override void Update()
     {
+        // Guard against empty patrol points
+        if (Enemy.PatrolPoints == null || Enemy.PatrolPoints.Length == 0)
+        {
+            Enemy.ChangeState(Enemy.IdleState);
+            return;
+        }
         // Check for player first
         if (Enemy.IsTargetDetected() || Enemy.Aggro.IsInCombat())
         {

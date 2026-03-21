@@ -80,7 +80,12 @@ public class AggroSystem : MonoBehaviour
             _threatTable.Remove(dead);
         }
 
-        if (_players.Count == 0) return;
+        // Remove dead/destroyed players from player list
+        _players.RemoveAll(p => p == null ||
+            p.gameObject == null ||
+            !p.gameObject.activeInHierarchy ||
+            (p.GetComponentInParent<HealthSystem>()?.IsDead() ?? true));
+            if (_players.Count == 0) return;
 
         // Priority 1 Target highest threat player (combat aggro)
         if (_threatTable.Count > 0)
@@ -101,6 +106,13 @@ public class AggroSystem : MonoBehaviour
 
         foreach (var player in _players)
         {
+            // Check for destroyed objects
+            if (player == null) continue;
+
+            // Check if dead
+            HealthSystem health = player.GetComponentInParent<HealthSystem>();
+            if (health == null || health.IsDead()) continue;
+
             float distance = Vector3.Distance(transform.position, player.position);
             if (distance < closestDistance)
             {
@@ -115,6 +127,7 @@ public class AggroSystem : MonoBehaviour
     public void RegisterThreat(Transform attacker, float threatAmount)
     {
         if (attacker == null) return;
+        if (attacker.gameObject.layer != LayerMask.NameToLayer("Player")) return;
 
         if (!_players.Contains(attacker))
         {

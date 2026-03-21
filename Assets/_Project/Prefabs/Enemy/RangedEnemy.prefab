@@ -109,13 +109,14 @@ MonoBehaviour:
   attackRange: 15
   loseAggroRange: 25
   attackDamage: 10
+  damageMultiplier: 1
   attackCoolDown: 1.5
   attackKnockback: 3
   moveSpeed: 4
   chaseSpeed: 5
   patrolPoints: []
   patrolWaitTime: 2
-  projectilePrefab: {fileID: 6271811319988869330, guid: 3ba17c1a2d2292c4db41008db166b221, type: 3}
+  projectilePrefab: {fileID: 6271811319988869330, guid: 007f63623445d3d41ab0e44d166e6c68, type: 3}
   firePoint: {fileID: 7900559348503046848}
   preferredRange: 12
   minRange: 8

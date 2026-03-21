@@ -13,6 +13,10 @@ public class BossStateSummon : EnemyStateBase
     private float _summonRadius = 5f;
     private bool _hasSummoned = false;
 
+    // Track active minions
+    private static int _activeMinionCount = 0;
+    private int _maxMinions = 3;
+
     public BossStateSummon(EnemyBase enemy, GameObject[] minionPrefabs, int minionCount) : base(enemy)
     {
         _minionPrefabs = minionPrefabs;
@@ -21,6 +25,14 @@ public class BossStateSummon : EnemyStateBase
 
     public override void Enter()
     {
+        Debug.Log($"Summon Enter - Active count: {_activeMinionCount} | Max: {_maxMinions}");
+        // Don't summon if already at max minions
+        if (_activeMinionCount >= _maxMinions)
+        {
+            Enemy.ChangeState(Enemy.ChaseState);
+            return;
+        }
+
         _summonTimer = 0f;
         _hasSummoned = false;
         Enemy.Agent.isStopped = true;
@@ -48,6 +60,9 @@ public class BossStateSummon : EnemyStateBase
     {
         if (_minionPrefabs == null || _minionPrefabs.Length == 0) return;
 
+        // Only spawn up to the max minion limit
+        int spawnCount = Mathf.Min(_minionCount, _maxMinions - _activeMinionCount);
+
         for (int i = 0; i < _minionCount; i++)
         {
             // Spawn in circle around boss
@@ -63,10 +78,21 @@ public class BossStateSummon : EnemyStateBase
             // Pick random minion prefab
             GameObject minionPrefab = _minionPrefabs[Random.Range(0, _minionPrefabs.Length)];
 
-            GameObject.Instantiate(minionPrefab, spawnPosition, Quaternion.identity);
+            GameObject minion = GameObject.Instantiate(minionPrefab, spawnPosition, Quaternion.identity);
+
+            // Track minion death to update count
+            HealthSystem minionHealth = minion.GetComponent<HealthSystem>();
+            if (minionHealth != null)
+            {
+                _activeMinionCount ++;
+                minionHealth.OnDeath += () => {
+                    _activeMinionCount--;
+                    Debug.Log($"Minion died! Active count: {_activeMinionCount}");
+                };
+            }
         }
 
-        Debug.Log($"Spawned {_minionCount} minions!");
+        Debug.Log($"Spawned {spawnCount} minions! Active: {_activeMinionCount}/{_maxMinions}");
     }
 
     public override void Exit()

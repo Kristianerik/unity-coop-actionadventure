@@ -17,6 +17,7 @@ public class EnemyBase : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] protected float attackDamage = 10f;
+    [SerializeField] protected float damageMultiplier = 1f;
     [SerializeField] protected float attackCoolDown = 1.5f;
     [SerializeField] protected float attackKnockback = 5f;
 
@@ -38,20 +39,20 @@ public class EnemyBase : MonoBehaviour
     public EnemyStateMachine StateMachine;
 
     // States
-    public EnemyStateIdle IdleState { get; protected set; }
-    public EnemyStatePatrol PatrolState { get; protected set; }
-    public EnemyStateChase ChaseState { get; protected set; }
-    public EnemyStateAttack AttackState { get; protected set; }
-    public EnemyStateDodge DodgeState { get; protected set; }
-    public EnemyStateStunned StunnedState { get; protected set; }
-    public EnemyStateDeath DeatghState { get; protected set; }
+    public IEnemyState  IdleState { get; protected set; }
+    public IEnemyState  PatrolState { get; protected set; }
+    public IEnemyState  ChaseState { get; protected set; }
+    public IEnemyState  AttackState { get; protected set; }
+    public IEnemyState  DodgeState { get; protected set; }
+    public IEnemyState  StunnedState { get; protected set; }
+    public IEnemyState  DeatghState { get; protected set; }
 
     // Timers
     public float AttackCooldownTimer { get; set; }
 
     // Properties
     public float AttackRange => attackRange;
-    public float AttackDamage => attackDamage;
+    public float AttackDamage => attackDamage * damageMultiplier;
     public float AttackKnockback => attackKnockback;
     public float AttackCooldown => attackCoolDown;
     public float DetectionRange => detectionRange;
@@ -139,7 +140,7 @@ public class EnemyBase : MonoBehaviour
         StateMachine.ChangeState(DeatghState);
     }
 
-    public void ChangeState(EnemyStateBase newState)
+    public void ChangeState(IEnemyState newState)
     {
         StateMachine.ChangeState(newState);
     }

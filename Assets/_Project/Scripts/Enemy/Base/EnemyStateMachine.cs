@@ -3,16 +3,16 @@ using UnityEngine;
 public class EnemyStateMachine
 {
     
-    public EnemyStateBase CurrentState { get; private set; }
-    private EnemyStateBase _previousState;
+    public IEnemyState CurrentState { get; private set; }
+    private IEnemyState _previousState;
 
-    public void Initialize(EnemyStateBase startState)
+    public void Initialize(IEnemyState startState)
     {
         CurrentState = startState;
         CurrentState.Enter();
     }
 
-    public void ChangeState(EnemyStateBase newState)
+    public void ChangeState(IEnemyState newState)
     {
         if (newState == CurrentState) return;
 
