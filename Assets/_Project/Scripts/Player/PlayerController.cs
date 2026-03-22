@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     [Header("Combat")]
     [SerializeField] private WeaponHandler weaponHandler;
 
+    [Header("Interaction")]
+    [SerializeField] private InteractionDetector interactionDetector;
+
     [Header("Double Tap Dodge")]
     [SerializeField] private float doubleTapWindow = 0.3f;
     [SerializeField] private float dodgeRollSpeed = 15f;
@@ -173,9 +176,15 @@ public class PlayerController : MonoBehaviour
 
     public void OnInteract(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
-        // TODO: Trigger interaction - will be implemented in Interaction System
-        Debug.Log("Interact");
+        if (context.started)
+        {
+            interactionDetector?.OnInteractPressed();
+        }
+
+        if (context.canceled)
+        {
+            interactionDetector?.OnInteractReleased();
+        }
     }
 
 

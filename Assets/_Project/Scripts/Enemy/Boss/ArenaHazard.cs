@@ -69,11 +69,8 @@ public class ArenaHazard : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapBox(transform.position, transform.localScale * 0.5f, transform.rotation);
 
-        Debug.Log($"Hazard overlap check - hits: {hits.Length}");
-
         foreach (var hit in hits)
         {
-            Debug.Log($"Hazard hit: {hit.gameObject.name}");
             HealthSystem health = hit.GetComponentInParent<HealthSystem>();
             health?.TakeDamage(damage, Vector3.zero);
         }
