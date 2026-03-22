@@ -54,7 +54,6 @@ public class BossStateSlam : EnemyStateBase
                 Vector3 knockback = (hit.transform.position - Enemy.transform.position).normalized * 10f;
                 knockback.y = 5f;
                 health.TakeDamage(Enemy.AttackDamage * 2f, knockback, Enemy.gameObject);
-                Debug.Log("Slam hit: " + hit.gameObject.name);
             }
         }
     }

@@ -25,7 +25,6 @@ public class BossStateSummon : EnemyStateBase
 
     public override void Enter()
     {
-        Debug.Log($"Summon Enter - Active count: {_activeMinionCount} | Max: {_maxMinions}");
         // Don't summon if already at max minions
         if (_activeMinionCount >= _maxMinions)
         {
@@ -37,7 +36,6 @@ public class BossStateSummon : EnemyStateBase
         _hasSummoned = false;
         Enemy.Agent.isStopped = true;
         Enemy.EnemyAnimator?.SetTrigger("summon");
-        Debug.Log($"{Enemy.gameObject.name} is summoning minions!");
     }
 
     public override void Update()
@@ -87,12 +85,9 @@ public class BossStateSummon : EnemyStateBase
                 _activeMinionCount ++;
                 minionHealth.OnDeath += () => {
                     _activeMinionCount--;
-                    Debug.Log($"Minion died! Active count: {_activeMinionCount}");
                 };
             }
         }
-
-        Debug.Log($"Spawned {spawnCount} minions! Active: {_activeMinionCount}/{_maxMinions}");
     }
 
     public override void Exit()

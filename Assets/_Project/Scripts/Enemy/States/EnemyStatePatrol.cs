@@ -24,6 +24,7 @@ public class EnemyStatePatrol : EnemyStateBase
             Enemy.ChangeState(Enemy.IdleState);
             return;
         }
+        
         // Check for player first
         if (Enemy.IsTargetDetected() || Enemy.Aggro.IsInCombat())
         {

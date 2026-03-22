@@ -149,7 +149,6 @@ public class AggroSystem : MonoBehaviour
 
         // Update target to highest threat 
         UpdateThreatTarget();
-        Debug.Log($"{gameObject.name} received threat from {attacker.name} | Threat: {_threatTable[attacker]}");
     }
 
     private void UpdateThreatTarget()

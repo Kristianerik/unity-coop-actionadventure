@@ -33,7 +33,6 @@ public class WeakPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"WeakPoint trigger entered by: {other.gameObject.name} | layer: {other.gameObject.layer} | isActive: {isActive}");
         if (!isActive || _isDestroyed) return;
 
         // Check if hit by player attack
@@ -42,7 +41,6 @@ public class WeakPoint : MonoBehaviour
             float damage = 10f * damageMultiplier;
             _bossHealth?.TakeDamage(damage, Vector3.zero);
             OnWeakPointHit?.Invoke(damage);
-            Debug.Log($"Weak point hit! Damage: {damage}");
 
             // Destroy weak point after being hit
             _isDestroyed = true;

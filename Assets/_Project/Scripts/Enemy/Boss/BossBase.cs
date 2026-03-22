@@ -127,11 +127,9 @@ public class BossBase : EnemyBase
         {
             case 0:
                 ChangeState(ChargeState);
-                Debug.Log("Executing Charge!");
                 break;
             case 1:
                 ChangeState(SlamState);
-                Debug.Log("Executing Slam!");
                 break;
             case 2:
             if (_summonCooldownTimer <= 0f)
@@ -151,7 +149,6 @@ public class BossBase : EnemyBase
         {
             case 0:
                 ChangeState(BarrageState);
-                Debug.Log("Executing Barrage!");
                 break;
             case 1:
                 if (_summonCooldownTimer <= 0f)
@@ -169,8 +166,6 @@ public class BossBase : EnemyBase
     {
         float percent = current / max;
 
-        Debug.Log($"Health: {current}/{max} | Percent: {percent} | CurrentPhase: {CurrentPhase}");
-
         if (percent <= phase2HealthThreshold && CurrentPhase < 2)
         {
             CurrentPhase = 2;
@@ -181,8 +176,6 @@ public class BossBase : EnemyBase
 
     protected virtual void EnterPhase2()
     {
-        Debug.Log($"{gameObject.name} entered Phase2!");
-
         // Speed boost
         Agent.speed *= 1.2f;
 
@@ -210,7 +203,6 @@ public class BossBase : EnemyBase
         Agent.speed *= enrageSpeedMultiplier;
         damageMultiplier = enrageDamageMultiplier;
         OnEnraged?.Invoke();
-        Debug.Log($"{gameObject.name} is ENRAGED!");
     }
 
     // Called by child classes to add mroe phases
@@ -218,7 +210,6 @@ public class BossBase : EnemyBase
     {
         CurrentPhase = phase;
         OnPhaseChanged?.Invoke(phase);
-        Debug.Log($"{gameObject.name} entered Phase {phase}!");
     }
 
     public int GetCurrentPhase() => CurrentPhase;
