@@ -48,6 +48,8 @@ public class InteractionDetector : MonoBehaviour
  
         foreach (var hit in hits)
         {
+            if (hit == null) continue;
+
             IInteractable interactable = hit.GetComponent<IInteractable>();
             if (interactable == null)
             {
@@ -65,10 +67,16 @@ public class InteractionDetector : MonoBehaviour
             }
         }
 
-        // Handle interactable change
+        // Null check before calling exit on destroyed objects
         if (closest != _currentInteractable)
         {
-            _currentInteractable?.OnInteractableExit(this);
+            if (_currentInteractable != null)
+            {
+                // Check if the object still exists before calling exit
+                MonoBehaviour mb = _currentInteractable as MonoBehaviour;
+                if (mb != null && mb.gameObject != null) _currentInteractable.OnInteractableExit(this);
+            }
+
             _currentInteractable = closest;
             _currentInteractable?.OnInteractableEnter(this);
         }

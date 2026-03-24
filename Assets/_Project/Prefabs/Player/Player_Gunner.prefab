@@ -31,6 +31,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3713772263885630958}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4410223948584893805
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5337742655783128677}
+  - component: {fileID: 6416250449675578045}
+  m_Layer: 0
+  m_Name: InteractionDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5337742655783128677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410223948584893805}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3525138149490751992}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6416250449675578045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4410223948584893805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c196208c0682d744993964cc4e249ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 2
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!1 &5174583749822272982
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,6 +258,7 @@ Transform:
   m_Children:
   - {fileID: 2545036028418123339}
   - {fileID: 8686800451084936456}
+  - {fileID: 5337742655783128677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &822982218849615317
@@ -457,6 +506,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   weaponHandler: {fileID: 2055526661331801173}
+  interactionDetector: {fileID: 6416250449675578045}
   doubleTapWindow: 0.3
   dodgeRollSpeed: 15
   dodgeRollDuration: 0.3

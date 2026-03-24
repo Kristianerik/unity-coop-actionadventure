@@ -45,12 +45,10 @@ public class Lever : InteractableBase
         if (isActivated)
         {
             OnActivated?.Invoke();
-            Debug.Log($"{gameObject.name} activated!");
         }
         else
         {
             OnDeactivated?.Invoke();
-            Debug.Log($"{gameObject.name} deactivated!");
         }
 
         interactPrompt = isActivated ? "Press E to deactivate" : "Press E to activate lever";

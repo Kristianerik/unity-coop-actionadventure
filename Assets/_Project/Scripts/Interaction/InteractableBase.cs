@@ -16,13 +16,11 @@ public abstract class InteractableBase : MonoBehaviour, IInteractable
     public virtual void OnInteractableEnter(InteractionDetector detector)
     {
         _playersInRange++;
-        Debug.Log($"{detector.gameObject.name} entered range of {gameObject.name}");
     }
 
     public virtual void OnInteractableExit(InteractionDetector detector)
     {
         _playersInRange--;
-        Debug.Log($"{detector.gameObject.name} exited range of {gameObject.name}");
     }
 
     public virtual void OnInteract(InteractionDetector detector)
