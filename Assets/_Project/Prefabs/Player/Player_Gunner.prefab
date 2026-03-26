@@ -79,6 +79,37 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 4096
+--- !u!1 &4479717972280180392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4410890510586779775}
+  m_Layer: 0
+  m_Name: CastPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4410890510586779775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4479717972280180392}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3525138149490751992}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5174583749822272982
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +267,7 @@ GameObject:
   - component: {fileID: 2055526661331801173}
   - component: {fileID: 4976904096150062398}
   - component: {fileID: 3858879308135444689}
+  - component: {fileID: 4283008411089156668}
   m_Layer: 0
   m_Name: Player_Gunner
   m_TagString: Untagged
@@ -259,6 +291,7 @@ Transform:
   - {fileID: 2545036028418123339}
   - {fileID: 8686800451084936456}
   - {fileID: 5337742655783128677}
+  - {fileID: 4410890510586779775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &822982218849615317
@@ -481,6 +514,74 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 730c68f1-fd76-4851-b8b7-0f6dd1ec7509
+    m_ActionName: 'Player/AbilityUse[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5089926643522916484}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnComboInput1
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: cecafe0e-fe7a-4230-8189-568b0fea1971
+    m_ActionName: 'Player/ComboInput1[/Keyboard/1]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5089926643522916484}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnComboInput2
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 070d4fb6-f7d6-423e-8f65-8052485c61a1
+    m_ActionName: 'Player/ComboInput2[/Keyboard/2]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5089926643522916484}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnComboInput3
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 8f50c96a-ed46-4403-a07e-0b2bbd02e927
+    m_ActionName: 'Player/ComboInput3[/Keyboard/3]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5089926643522916484}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnComboInput4
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5284bfb4-aaa1-4218-8e62-c7ef599ba5a0
+    m_ActionName: 'Player/ComboInput4[/Keyboard/4]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -563,6 +664,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4283008411089156668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558844051947698630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17575f1720d74c84d9beba4353333ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comboInputWindow: 2
+  maxComboLength: 4
+  spellProjectilePrefab: {fileID: 3631128539775331800, guid: 23928a27cb3f0004a817c9ca3a61eb5a, type: 3}
+  spellAOEPrefab: {fileID: 850288522854136833, guid: f878881de4ead9145ad07b26abf9babf, type: 3}
+  spellShieldPrefab: {fileID: 234470463166470514, guid: 484ca20d997eb034a81f60d1821a245c, type: 3}
+  spellBuffPrefab: {fileID: 1439464071582670788, guid: 55eb538518bc3ff478d60584e461f2ad, type: 3}
+  spellBeamPrefab: {fileID: 7982553830748350048, guid: d5519c4f99142a64d9890f85d6b44193, type: 3}
+  castPoint: {fileID: 4410890510586779775}
+  playerAnimator: {fileID: 3858879308135444689}
 --- !u!1 &7560554635445309516
 GameObject:
   m_ObjectHideFlags: 0
@@ -676,3 +798,4 @@ MonoBehaviour:
   chargeTime: 0.8
   chargedDamageMultiplier: 3
   chargedBulletScale: 2
+  tankComboSystem: {fileID: 4283008411089156668}

@@ -9,11 +9,19 @@ public abstract class SpellBase : MonoBehaviour
     [SerializeField] protected float duration = 3f;
     [SerializeField] protected float castTime = 3f;
 
+    protected float _damageMultiplier = 1f;
+
     protected GameObject _caster;
 
     public virtual void Initialize(GameObject caster)
     {
         _caster = caster;
+    }
+
+    public void SetDamageMultiplier(float multiplier)
+    {
+        _damageMultiplier = multiplier;
+        damage *= multiplier;
     }
 
     public abstract void Cast(Vector3 position, Vector3 direction);

@@ -18,6 +18,9 @@ public abstract class WeaponBase : MonoBehaviour
         playerAnimator = animator;
     }
 
+
+    public virtual void UseAbility() { }
+    public virtual void AddComboInput(int index) { }
     public abstract void LightAttack(Vector2 moveInput);
     public abstract void HeavyAttack(Vector2 moveInput);
     public abstract void Block(bool isBlocking);

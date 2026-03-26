@@ -24,6 +24,16 @@ public class WeaponHandler : MonoBehaviour
         equippedWeapon?.HeavyAttack(moveInput);
     }
 
+    public void UseAbility()
+    {
+        equippedWeapon?.UseAbility();
+    }
+
+    public void AddComboInput(int index)
+    {
+        equippedWeapon?.AddComboInput(index);
+    }
+
     public void CancelCharge()
     {
         equippedWeapon?.CancelCharge();

@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 2513480344659371567}
   - component: {fileID: 3966672358081001099}
   - component: {fileID: 7269138691471507917}
+  - component: {fileID: 8572494912780999844}
   m_Layer: 8
   m_Name: Player_Swordsman
   m_TagString: Untagged
@@ -489,6 +490,38 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8175858746134012976}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnAbilityUse
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 730c68f1-fd76-4851-b8b7-0f6dd1ec7509
+    m_ActionName: 'Player/AbilityUse[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cecafe0e-fe7a-4230-8189-568b0fea1971
+    m_ActionName: 'Player/ComboInput1[/Keyboard/1]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 070d4fb6-f7d6-423e-8f65-8052485c61a1
+    m_ActionName: 'Player/ComboInput2[/Keyboard/2]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8f50c96a-ed46-4403-a07e-0b2bbd02e927
+    m_ActionName: 'Player/ComboInput3[/Keyboard/3]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5284bfb4-aaa1-4218-8e62-c7ef599ba5a0
+    m_ActionName: 'Player/ComboInput4[/Keyboard/4]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -571,6 +604,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8572494912780999844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6562103795320268868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae675172b93cea40b55eff6e5f8c5c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityName: ThrownSword
+  cooldown: 5
+  castTime: 0.3
+  throwDamage: 25
+  throwSpeed: 15
+  maxRange: 10
+  swordVisual: {fileID: 6959911067359048472}
+  thrownSwordPrefab: {fileID: 2758156851889594786, guid: 5eae4e0408ff93b478a0ff05a38ab09d, type: 3}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &6959911067359048472
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,6 +749,7 @@ MonoBehaviour:
   playerAnimator: {fileID: 7269138691471507917}
   hitbox: {fileID: 4407529884639455181}
   comboSystem: {fileID: 82813472268844512}
+  swordThrowAbility: {fileID: 8572494912780999844}
 --- !u!1 &8126249881498157972
 GameObject:
   m_ObjectHideFlags: 0

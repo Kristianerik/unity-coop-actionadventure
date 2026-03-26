@@ -168,6 +168,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnAbilityUse(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        weaponHandler?.UseAbility();
+    }
+
+    public void OnComboInput1(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        weaponHandler?.AddComboInput(1);
+    }
+    public void OnComboInput2(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        weaponHandler?.AddComboInput(2);
+    }
+    public void OnComboInput3(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        weaponHandler?.AddComboInput(3);
+    }
+    public void OnComboInput4(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        weaponHandler?.AddComboInput(4);
+    }
+    
     public void OnBlock(InputAction.CallbackContext context)
     {
         _isBlocking = context.ReadValueAsButton();

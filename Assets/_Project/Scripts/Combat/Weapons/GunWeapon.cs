@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -17,6 +18,9 @@ public class GunWeapon : WeaponBase
     [SerializeField] private float chargedDamageMultiplier = 3f;
     [SerializeField] private float chargedBulletScale = 2f;
 
+    [Header("Ability")]
+    [SerializeField] private TankComboSystem tankComboSystem;
+
     private int _currentAmmo;
     private float _fireRateTimer = 0f;
     private bool _isReloading = false;
@@ -24,10 +28,16 @@ public class GunWeapon : WeaponBase
     private bool _isCharging = false;
     private float _chargeTimer = 0f;
     private float _chargePercent = 0f;
+    private float _baseFireRate;
+    private float _baseLightAttackDamage;
+    private float _baseHeavyAttackDamage;   
 
     private void Awake()
     {
         _currentAmmo = maxAmmo;
+        _baseFireRate = fireRate;
+        _baseLightAttackDamage = lightAttackDamage;
+        _baseHeavyAttackDamage = heavyAttackDamage;
     }
 
     private void Update()
@@ -53,6 +63,11 @@ public class GunWeapon : WeaponBase
             StartCoroutine(ChargeShot());
             Debug.Log("Charging shot...");
         }
+    }
+
+    public override void AddComboInput(int index)
+    {
+        tankComboSystem?.AddInput(index);
     }
 
     private IEnumerator ChargeShot()
@@ -165,6 +180,16 @@ public class GunWeapon : WeaponBase
         Debug.Log("Reload complete!");
     }
 
+    public void ApplyFireRateBuff(float multiplier)
+    {
+        fireRate = _baseFireRate / multiplier;
+    }
+
+    public void ApplyDamageBuff(float multiplier)
+    {
+        lightAttackDamage = _baseLightAttackDamage * multiplier;
+        heavyAttackDamage = _baseHeavyAttackDamage * multiplier;
+    }
     public override void OnEquip()
     {
         gameObject.SetActive(true);

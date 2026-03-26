@@ -7,6 +7,9 @@ public class SwordWeapon : WeaponBase
     [SerializeField] private HitboxController hitbox;
     [SerializeField] private ComboSystem comboSystem;
 
+    [Header("Ability")]
+    [SerializeField] private SwordThrowAbility swordThrowAbility;
+
     public override void Initialize(GameObject owner, Animator animator)
     {
         base.Initialize(owner, animator);
@@ -21,6 +24,11 @@ public class SwordWeapon : WeaponBase
     public override void HeavyAttack(Vector2 moveInput)
     {
         comboSystem?.RequestHeavyAttack(moveInput);
+    }
+
+    public override void UseAbility()
+    {
+        swordThrowAbility?.TryUse();
     }
 
     public override void Block(bool isBlocking)

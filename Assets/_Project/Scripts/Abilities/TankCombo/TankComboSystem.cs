@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 
 public class TankComboSystem : MonoBehaviour
@@ -23,6 +24,7 @@ public class TankComboSystem : MonoBehaviour
     private List<int> _currentCombo = new List<int>();
     private float _comboTimer = 0f;
     private bool _isCasting = false;
+    private float  _damageMultiplier = 1f;
     private GameObject _owner;
 
     // Combo definitions - sequence of button indices maps to spell
@@ -118,6 +120,7 @@ public class TankComboSystem : MonoBehaviour
             if (spellComponent != null)
             {
                 spellComponent.Initialize(_owner);
+                spellComponent.SetDamageMultiplier(_damageMultiplier);
                 spellComponent.Cast(castPoint.position, _owner.transform.forward);
             }
         }
@@ -137,6 +140,13 @@ public class TankComboSystem : MonoBehaviour
         _comboTimer = 0f;
     }
 
+    public void RemoveBuffs()
+    {
+        _damageMultiplier = 1f;
+    }
+
+    public void ApplyDamageBuff(float multiplier) => _damageMultiplier = multiplier;
+    public float GetDamageMultiplier() => _damageMultiplier;
     public List<int> GetCurrentCombo() => new List<int>(_currentCombo);
     public bool isCasting() => _isCasting;
 }
