@@ -35,6 +35,12 @@ public abstract class AbilityBase : MonoBehaviour
 
     protected virtual System.Collections.IEnumerator CastAbility()
     {
+        if (_owner == null)
+        {
+            Debug.LogError($"{abilityName} has no owner assigned! Make sure Initialize is called.");
+            yield break;
+        }
+        
         _isCasting = true;
 
         // Play cast animation 

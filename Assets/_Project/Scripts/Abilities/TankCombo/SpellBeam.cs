@@ -32,7 +32,15 @@ public class SpellBeam : SpellBase
             elapsed += Time.deltaTime;
             tickTimer += Time.deltaTime;
 
-            // Update beam visual
+            // Follow cast point if available
+            if (_castPoint != null)
+            {
+                startPos = _castPoint.position;
+                direction = _caster.transform.forward;
+            }
+            
+
+            // Update beam visual every frame
             Vector3 endPos = startPos + direction * beamLength;
             if (_lineRenderer != null)
             {
@@ -51,6 +59,12 @@ public class SpellBeam : SpellBase
         }
 
         Destroy(gameObject);
+    }
+
+    public override void SetDamageMultiplier(float multiplier)
+    {
+        base.SetDamageMultiplier(multiplier);
+        tickDamage *= multiplier;
     }
 
     private void DamageAlongBeam(Vector3 startPos, Vector3 direction)

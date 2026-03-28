@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4285916627652538881}
   - component: {fileID: 2624398976164419611}
   - component: {fileID: 4407529884639455181}
+  - component: {fileID: 2499723141814559905}
   m_Layer: 9
   m_Name: MeleeHitbox
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 231627835741854129}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52,7 +53,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.3, y: 0.3, z: 0.8}
+  m_Size: {x: 0.2, y: 0.2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4407529884639455181
 MonoBehaviour:
@@ -71,6 +72,33 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 128
+--- !u!54 &2499723141814559905
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231627835741854129}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &897938397219607069
 GameObject:
   m_ObjectHideFlags: 0
@@ -617,7 +645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityName: ThrownSword
-  cooldown: 5
+  cooldown: 1.5
   castTime: 0.3
   throwDamage: 25
   throwSpeed: 15
@@ -694,7 +722,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: ab3183be23768c4409a2dbe74bb3df51, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -728,7 +756,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11275b4065f82c64b835f036f1f7ef3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  comboChains: []
+  comboChains:
+  - chainName: ForwardCombo
+    attacks:
+    - attackName: Light Jab
+      requiredInput: 0
+      damage: 15
+      knockbackForce: 3
+      duration: 0.6
+      comboWindowStart: 0.2
+      comboWindowEnd: 0.5
+      requiredDirection: {x: 0, y: 0}
+      animationTrigger: LightAttack1
+      attackSound: {fileID: 0}
+    - attackName: Light Cross
+      requiredInput: 0
+      damage: 20
+      knockbackForce: 4
+      duration: 0.6
+      comboWindowStart: 0.2
+      comboWindowEnd: 0.5
+      requiredDirection: {x: 0, y: 0}
+      animationTrigger: LightAttack2
+      attackSound: {fileID: 0}
+    - attackName: Heavy
+      requiredInput: 1
+      damage: 40
+      knockbackForce: 10
+      duration: 0.8
+      comboWindowStart: 0.3
+      comboWindowEnd: 0.65
+      requiredDirection: {x: 0, y: 0}
+      animationTrigger: LightAttack3
+      attackSound: {fileID: 0}
   meleeHitbox: {fileID: 4407529884639455181}
   animator: {fileID: 7269138691471507917}
 --- !u!114 &2459406542082088228
@@ -776,7 +836,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: 1, z: 0.5}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 910677428859191434}

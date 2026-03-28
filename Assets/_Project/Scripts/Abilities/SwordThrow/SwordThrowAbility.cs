@@ -19,17 +19,21 @@ public class SwordThrowAbility : AbilityBase
         if (_swordOut) return;
 
         _swordOut = true;
+        Debug.Log($"Hiding sword visual: {swordVisual}");
 
         // Hide sword on player
         if (swordVisual != null) swordVisual.SetActive(false);
 
+        Vector3 spawnPosition = _owner.transform.position + Vector3.up * 1.2f + _owner.transform.forward;
+
         // Spawn thrown sword
-        GameObject thrown = Instantiate(thrownSwordPrefab, transform.position + _owner.transform.forward, _owner.transform.rotation);
+        GameObject thrown = Instantiate(thrownSwordPrefab, spawnPosition, _owner.transform.rotation);
 
         ThrownSword thrownSword = thrown.GetComponent<ThrownSword>();
         if (thrownSword != null)
         {
             thrownSword.Initialize(_owner, throwDamage, throwSpeed, maxRange, hitLayers);
+            thrownSword.OnReturnedToOwner -= OnSwordReturned;
             thrownSword.OnReturnedToOwner += OnSwordReturned;
         }
     }
@@ -40,8 +44,6 @@ public class SwordThrowAbility : AbilityBase
 
         // Show sword on player
         if (swordVisual != null) swordVisual.SetActive(true);
-
-        Debug.Log("Sword returned!");
     }
 
     public override bool CanUse() => base.CanUse() && !_swordOut;

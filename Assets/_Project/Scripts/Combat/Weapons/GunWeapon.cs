@@ -65,6 +65,12 @@ public class GunWeapon : WeaponBase
         }
     }
 
+    public override void UseAbility()
+    {
+        tankComboSystem?.ConfirmCombo();
+    }
+
+
     public override void AddComboInput(int index)
     {
         tankComboSystem?.AddInput(index);

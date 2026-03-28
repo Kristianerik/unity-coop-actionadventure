@@ -15,6 +15,7 @@ public class SwordWeapon : WeaponBase
         base.Initialize(owner, animator);
         hitbox?.Initialize(owner);
         comboSystem?.Initialize(hitbox, animator);
+        swordThrowAbility?.Initialize(owner, animator);
     }
     public override void LightAttack(Vector2 moveInput)
     {

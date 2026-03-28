@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -53,8 +54,9 @@ public class TankComboSystem : MonoBehaviour
           {"1,3,4", spellShieldPrefab}, // enhanced shield
 
           // 4 Button Combos
-          {"1,2,3,4", spellBeamPrefab}, // ultimate beam
-          {"4,3,2,1", spellAOEPrefab} // ultimate aoe 
+          {"1,2,3,4", spellProjectilePrefab}, // ultimate projectile
+          {"4,3,2,1", spellAOEPrefab}, // ultimate aoe
+          {"1,3,2,4", spellBeamPrefab} // ultimate beam  
         };
     }
 
@@ -86,18 +88,19 @@ public class TankComboSystem : MonoBehaviour
 
         Debug.Log($"Combo input: {GetComboString()} ({_currentCombo.Count}/{maxComboLength})");
 
-        // Check for valid combo
-        string comboKey = GetComboString();
-        if (_comboSpells.ContainsKey(comboKey))
+        // Reset if max length reached with no valid combo
+        if (_currentCombo.Count >= maxComboLength)
         {
-            // Valid combo begin cast
-            StartCoroutine(CastSpell(_comboSpells[comboKey], comboKey));
-        }
-        else if (_currentCombo.Count >= maxComboLength)
-        {
-            // Max length reached with no valid combo
-            Debug.Log("Invalid combo - resetting");
-            ResetCombo();
+            string comboKey = GetComboString();
+            if (_comboSpells.ContainsKey(comboKey))
+            {
+                ConfirmCombo();
+            }
+            else
+            {
+                Debug.Log("Invalid combo - resetting");
+                ResetCombo();
+            }
         }
     }
 
@@ -119,14 +122,35 @@ public class TankComboSystem : MonoBehaviour
             SpellBase spellComponent = spell.GetComponent<SpellBase>();
             if (spellComponent != null)
             {
+                float comboLengthMultiplier = 1f + ((_currentCombo.Count - 2) * 0.5f);
+
                 spellComponent.Initialize(_owner);
-                spellComponent.SetDamageMultiplier(_damageMultiplier);
+                spellComponent.SetCastPoint(castPoint);
+                spellComponent.SetDamageMultiplier(_damageMultiplier * comboLengthMultiplier);
                 spellComponent.Cast(castPoint.position, _owner.transform.forward);
             }
         }
 
         ResetCombo();
         _isCasting = false;
+    }
+
+    public void ConfirmCombo()
+    {
+        if (_isCasting) return;
+        if (_currentCombo.Count == 0) return;
+
+        string comboKey = GetComboString();
+
+        if (_comboSpells.ContainsKey(comboKey))
+        {
+            StartCoroutine(CastSpell(_comboSpells[comboKey], comboKey));
+        }
+        else
+        {
+            Debug.LogWarning($"No spell for combo: {comboKey} - resetting");
+            ResetCombo();
+        }
     }
 
     private string GetComboString()

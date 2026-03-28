@@ -11,6 +11,7 @@ public abstract class SpellBase : MonoBehaviour
 
     protected float _damageMultiplier = 1f;
 
+    protected Transform _castPoint;
     protected GameObject _caster;
 
     public virtual void Initialize(GameObject caster)
@@ -18,10 +19,15 @@ public abstract class SpellBase : MonoBehaviour
         _caster = caster;
     }
 
-    public void SetDamageMultiplier(float multiplier)
+    public virtual void SetDamageMultiplier(float multiplier)
     {
         _damageMultiplier = multiplier;
         damage *= multiplier;
+    }
+
+    public void SetCastPoint(Transform castPoint)
+    {
+        _castPoint = castPoint;
     }
 
     public abstract void Cast(Vector3 position, Vector3 direction);

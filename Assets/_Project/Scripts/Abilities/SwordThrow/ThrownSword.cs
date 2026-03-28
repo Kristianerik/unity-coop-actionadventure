@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Numerics;
 using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 public class ThrownSword : MonoBehaviour
 {
@@ -13,13 +15,15 @@ public class ThrownSword : MonoBehaviour
     private Vector3 _startPosition;
     private Vector3 _direction;
     private bool _returning = false;
+    private bool _hasReturned = false;
     private float _distanceTravelled = 0f;
+    private float _returnHeight;
     private List<GameObject> _hitObjects = new List<GameObject>();
     [SerializeField] LayerMask _hitLayers;
 
     public System.Action OnReturnedToOwner;
 
-    public void Initialize(GameObject owner, float damage, float speed, float maxRange, LayerMask hitLayers)
+    public void Initialize(GameObject owner, float damage, float speed, float maxRange, LayerMask hitLayers, float returnHeight = 1.2f)
     {
         _owner = owner;
         _damage = damage;
@@ -28,6 +32,7 @@ public class ThrownSword : MonoBehaviour
         _hitLayers = hitLayers;
         _startPosition = transform.position;
         _direction = owner.transform.forward;
+        _returnHeight = returnHeight;
     }
 
     private void Update()
@@ -62,15 +67,19 @@ public class ThrownSword : MonoBehaviour
             return;
         }
 
-        Vector3 returnDirection = (_owner.transform.position - transform.position).normalized;
-        transform.position += returnDirection * _speed * 1.5f * Time.deltaTime;
+        Vector3 returnTarget = _owner.transform.position + Vector3.up * _returnHeight;
 
-        // Rotate sword as it returns 
+        Vector3 returnDirection = (returnTarget - transform.position).normalized;
+        transform.position += returnDirection * _speed * 1.5f * Time.deltaTime;
         transform.Rotate(Vector3.right * 720f * Time.deltaTime);
 
+        // Recalculate distance AFTER moving
+        float distanceAfterMove = Vector3.Distance(transform.position, returnTarget);
+
         // Check if returned to owner
-        if (Vector3.Distance(transform.position, _owner.transform.position) < 0.5f)
+        if (!_hasReturned && distanceAfterMove < 0.5f)
         {
+            _hasReturned = true;
             OnReturnedToOwner?.Invoke();
             Destroy(gameObject);
         }
