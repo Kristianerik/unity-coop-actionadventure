@@ -48,6 +48,13 @@ public class HealthSystem : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    public void ResetHealth()
+    {
+        _isDead = false;
+        currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     public float GetHealthPercent () => currentHealth / maxHealth;
     public bool IsDead() => _isDead;
 

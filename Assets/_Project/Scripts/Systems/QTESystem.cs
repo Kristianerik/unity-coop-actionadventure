@@ -6,7 +6,7 @@ public class QTESystem : MonoBehaviour
 {
     
     [Header("QTE Settings")]
-    [SerializeField] private float timeReductionPerSuccess = 0.5f;
+    [SerializeField] private float timeReductionPerSuccess = 1f;
     [SerializeField] private float qteWindowDuration = 1f;
     [SerializeField] private int maxQTEAttempts = 5;
 

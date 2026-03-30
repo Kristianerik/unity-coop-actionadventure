@@ -14,6 +14,9 @@ GameObject:
   - component: {fileID: 7936706999939212201}
   - component: {fileID: 4514661738931129921}
   - component: {fileID: 5053632620497230225}
+  - component: {fileID: 2911131850480366279}
+  - component: {fileID: 2095047235736071670}
+  - component: {fileID: 8105115931704736343}
   m_Layer: 7
   m_Name: RangedEnemy
   m_TagString: Untagged
@@ -142,6 +145,49 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2911131850480366279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161136573360783120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42b41e7dad7b2b146a43ecb9dd4be422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathAnimationDuration: 2
+  playerVisual: {fileID: 6256835793683044380}
+--- !u!114 &2095047235736071670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161136573360783120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67bb66472ee8c44292e82642bf18e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRespawnTime: 10
+  respawnPoint: {fileID: 0}
+--- !u!114 &8105115931704736343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161136573360783120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7a3a833428ec4ea7a21c77bd9eb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeReductionPerSuccess: 0.5
+  qteWindowDuration: 1
+  maxQTEAttempts: 5
 --- !u!1 &669868002944510666
 GameObject:
   m_ObjectHideFlags: 0

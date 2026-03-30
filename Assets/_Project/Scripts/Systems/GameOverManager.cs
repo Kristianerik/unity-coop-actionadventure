@@ -5,7 +5,8 @@ public class GameOverManager : MonoBehaviour
 {
     
     [Header("Settings")]
-    [SerializeField] private float gameOverDelay = 2f;
+    [SerializeField] private float gameOverDelay = 10f;
+    [SerializeField] private GameObject gameOverPanel;
     private List<HealthSystem> _playerHealthSystems = new List<HealthSystem>();
     private bool _isGameOver = false;
 
@@ -52,12 +53,17 @@ public class GameOverManager : MonoBehaviour
     {
         _isGameOver = true;
         Debug.Log("Game Over! All players are dead.");
+
+        // SHow game over panel
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
         OnGameOver?.Invoke();
-
         yield return new WaitForSeconds(gameOverDelay);
-
         CheckpointManager.Instance?.RestartFromCheckpoint();
         _isGameOver = false;
+
+        // Hide game over panel
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
     }
 
     public bool IsGameOver() => _isGameOver;

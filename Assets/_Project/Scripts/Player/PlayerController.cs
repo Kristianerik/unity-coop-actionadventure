@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dodgeRollDuration = 0.3f;
     [SerializeField] private float dodgeRollCooldown = 1f;
 
+    [Header("Death")]
+    [SerializeField] private QTESystem qteSystem;
+
     [Header("Rotation")]
     [SerializeField] private float rotationSpeed = 10f;
 
@@ -39,6 +42,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private Animator _animator;
     private Transform _cameraTransform;
+    private DamageVignette damageVignette;
 
     // Movement
     private Vector2 _moveInput;
@@ -76,6 +80,15 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _cameraTransform = Camera.main.transform;
         cameraController = Camera.main.GetComponent<CameraController>();
+        qteSystem = GetComponent<QTESystem>();
+    }
+
+    private void Start()
+    {
+        HealthSystem health = GetComponent<HealthSystem>();
+        health.OnDamageTaken += _ => damageVignette?.TriggerFlash();
+
+        damageVignette = GetComponentInChildren<DamageVignette>();
     }
 
     private void Update()
@@ -212,8 +225,13 @@ public class PlayerController : MonoBehaviour
         {
             interactionDetector?.OnInteractReleased();
         }
-    }
 
+        // Also trigger QTE if active
+        if (context.performed)
+        {
+            qteSystem?.OnQTEInput(context);
+        }
+    }
 
     // Movement
     

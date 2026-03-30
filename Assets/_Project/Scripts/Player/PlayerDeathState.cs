@@ -30,15 +30,23 @@ public class PlayerDeathState : MonoBehaviour
 
     private IEnumerator DeathSequence()
     {
-        // Disable player control
         _playerController.enabled = false;
         _characterController.enabled = false;
+
+        // Switch to QTE action map
+        UnityEngine.InputSystem.PlayerInput playerInput =
+            GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        if (playerInput != null)
+            playerInput.SwitchCurrentActionMap("QTE");
+
+        WeaponHandler weaponHandler = GetComponent<WeaponHandler>();
+        if (weaponHandler != null)
+            weaponHandler.enabled = false;
 
         Animator animator = GetComponentInChildren<Animator>();
         animator?.SetTrigger("Death");
 
         yield return new WaitForSeconds(deathAnimationDuration);
-
         OnDeathAnimationComplete?.Invoke();
     }
 
@@ -47,6 +55,19 @@ public class PlayerDeathState : MonoBehaviour
         _isDead = false;
         _playerController.enabled = true;
         _characterController.enabled = true;
+
+        // Switch back to Player action map
+        UnityEngine.InputSystem.PlayerInput playerInput =
+            GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        if (playerInput != null)
+            playerInput.SwitchCurrentActionMap("Player");
+
+        WeaponHandler weaponHandler = GetComponent<WeaponHandler>();
+        if (weaponHandler != null)
+            weaponHandler.enabled = true;
+
+        HealthSystem health = GetComponent<HealthSystem>();
+        health?.ResetHealth();
 
         Animator animator = GetComponentInChildren<Animator>();
         animator?.SetTrigger("Revive");

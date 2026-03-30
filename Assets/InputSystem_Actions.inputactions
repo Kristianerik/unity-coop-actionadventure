@@ -971,6 +971,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "QTE",
+            "id": "51355a9d-4929-4f35-975f-72f6adb24d36",
+            "actions": [
+                {
+                    "name": "QTEPress",
+                    "type": "Button",
+                    "id": "5ff784f2-036e-43d3-9e94-38e62ae15f97",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a40f4f23-6caa-4a53-8c9a-540816582a71",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QTEPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "27db8507-2545-4af8-acc9-4860d06b59a9",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QTEPress",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
