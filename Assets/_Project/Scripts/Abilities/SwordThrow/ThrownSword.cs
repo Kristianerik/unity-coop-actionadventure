@@ -23,7 +23,7 @@ public class ThrownSword : MonoBehaviour
 
     public System.Action OnReturnedToOwner;
 
-    public void Initialize(GameObject owner, float damage, float speed, float maxRange, LayerMask hitLayers, float returnHeight = 1.2f)
+    public void Initialize(GameObject owner, float damage, float speed, float maxRange, LayerMask hitLayers, float returnHeight = 1.2f, Vector3 aimDirection = default(Vector3))
     {
         _owner = owner;
         _damage = damage;
@@ -31,7 +31,7 @@ public class ThrownSword : MonoBehaviour
         _maxRange = maxRange;
         _hitLayers = hitLayers;
         _startPosition = transform.position;
-        _direction = owner.transform.forward;
+        _direction = aimDirection != default ? aimDirection :owner.transform.forward;
         _returnHeight = returnHeight;
     }
 

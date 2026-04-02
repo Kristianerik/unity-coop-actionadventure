@@ -117,7 +117,14 @@ public class TankComboSystem : MonoBehaviour
 
         if (spellPrefab != null && castPoint != null)
         {
-            GameObject spell = Instantiate(spellPrefab, castPoint.position, castPoint.rotation);
+            // Get aim direction from player controller
+            PlayerController playerController = _owner.GetComponent<PlayerController>();
+            Vector3 aimDirection = playerController != null ? playerController.GetAimDirection() : _owner.transform.forward;
+
+            // Rotate cast point to face aim direction
+            Quaternion aimRotation = Quaternion.LookRotation(aimDirection);
+
+            GameObject spell = Instantiate(spellPrefab, castPoint.position, aimRotation);
 
             SpellBase spellComponent = spell.GetComponent<SpellBase>();
             if (spellComponent != null)
@@ -127,7 +134,7 @@ public class TankComboSystem : MonoBehaviour
                 spellComponent.Initialize(_owner);
                 spellComponent.SetCastPoint(castPoint);
                 spellComponent.SetDamageMultiplier(_damageMultiplier * comboLengthMultiplier);
-                spellComponent.Cast(castPoint.position, _owner.transform.forward);
+                spellComponent.Cast(castPoint.position, aimDirection);
             }
         }
 

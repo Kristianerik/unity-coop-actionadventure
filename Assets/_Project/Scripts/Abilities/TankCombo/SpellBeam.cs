@@ -32,11 +32,15 @@ public class SpellBeam : SpellBase
             elapsed += Time.deltaTime;
             tickTimer += Time.deltaTime;
 
-            // Follow cast point if available
+            // Follow cast point and use its forward as aim direction
             if (_castPoint != null)
             {
                 startPos = _castPoint.position;
-                direction = _caster.transform.forward;
+
+                // Use camera aim direction 
+                PlayerController playerController = _caster?.GetComponent<PlayerController>();
+
+                direction = playerController != null ? playerController.GetAimDirection() : _castPoint.forward;
             }
             
 

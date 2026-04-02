@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2034788622940780366}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5337742655783128677}
   - component: {fileID: 6416250449675578045}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: InteractionDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +192,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4410890510586779775}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CastPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8686800451084936456}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WeaponPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,7 +258,7 @@ GameObject:
   - component: {fileID: 6057463830981190415}
   - component: {fileID: 23549212971391773}
   - component: {fileID: 4493258842293829251}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +475,8 @@ GameObject:
   - component: {fileID: 3858879308135444689}
   - component: {fileID: 4283008411089156668}
   - component: {fileID: 480360059178732911}
-  m_Layer: 0
+  - component: {fileID: 5598940795577321083}
+  m_Layer: 8
   m_Name: Player_Gunner
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -937,6 +938,22 @@ MonoBehaviour:
   regenRate: 5
   regenDelay: 5
   regenEnabled: 1
+--- !u!114 &5598940795577321083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558844051947698630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0af6a38411b3a554f9acc47e53f8da95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponPivot: {fileID: 8686800451084936456}
+  aimSpeed: 15
+  minVerticalAngle: -60
+  maxVerticalAngle: 60
 --- !u!1 &7560554635445309516
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,7 +966,7 @@ GameObject:
   - component: {fileID: 2206091275137669948}
   - component: {fileID: 8115322648309997459}
   - component: {fileID: 6358644527298421506}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}

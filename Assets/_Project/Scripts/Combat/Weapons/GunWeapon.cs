@@ -138,10 +138,15 @@ public class GunWeapon : WeaponBase
 
         if (bulletPrefab != null && firePoint != null)
         {
+            // Get aim direction from player controller
+            PlayerController playerController = Owner.GetComponent<PlayerController>();
+            
+            Vector3 aimDirection = playerController != null ? playerController.GetAimDirection() : firePoint.forward;
+
             GameObject bullet = Instantiate(
                 bulletPrefab,
                 firePoint.position,
-                firePoint.rotation
+                Quaternion.LookRotation(aimDirection)
             );
 
             float damage;

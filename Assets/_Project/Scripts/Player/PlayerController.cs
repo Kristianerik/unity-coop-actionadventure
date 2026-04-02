@@ -345,4 +345,12 @@ public class PlayerController : MonoBehaviour
         _animator.SetFloat(SpeedHash, speed, 0.1f, Time.deltaTime);
         _animator.SetBool(IsGroundedHash, _isGrounded);
     }
+
+    // Aim Helper Method
+
+    public Vector3 GetAimDirection()
+    {
+        if (_cameraTransform == null) return transform.forward;
+        return _cameraTransform.forward;
+    }
 }

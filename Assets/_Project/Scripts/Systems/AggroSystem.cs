@@ -20,7 +20,7 @@ public class AggroSystem : MonoBehaviour
 
     private void Start()
     {
-        RefreshPlayerList();
+        StartCoroutine(DelayedRefresh());
     }
 
     private void Update()
@@ -35,6 +35,11 @@ public class AggroSystem : MonoBehaviour
         DecayThreat();
     }
 
+    private System.Collections.IEnumerator DelayedRefresh()
+    {
+        yield return null;
+        RefreshPlayerList();
+    }
     private void RefreshPlayerList()
     {
         _players.Clear();
@@ -45,7 +50,25 @@ public class AggroSystem : MonoBehaviour
             if (!_players.Contains(root))
             {
                 _players.Add(root);
+
+                HealthSystem health = root.GetComponentInParent<HealthSystem>();
+                if (health != null) health.OnDeath += () => OnPlayerDied(root);
             }
+        }
+    }
+
+    private void OnPlayerDied(Transform player)
+    {
+        // If current target dies, clear it immediately
+        if (_currentTarget == player)
+        {
+            _currentTarget = null;
+            _threatTable.Remove(player);
+            _isInCombat = false;
+            Debug.Log($"{gameObject.name} lost target - player died.");
+
+            // Find new target
+            UpdateTarget();
         }
     }
 
@@ -85,7 +108,10 @@ public class AggroSystem : MonoBehaviour
             p.gameObject == null ||
             !p.gameObject.activeInHierarchy ||
             (p.GetComponentInParent<HealthSystem>()?.IsDead() ?? true));
-            if (_players.Count == 0) return;
+
+
+        
+        if (_players.Count == 0) return;
 
         // Priority 1 Target highest threat player (combat aggro)
         if (_threatTable.Count > 0)
@@ -96,7 +122,6 @@ public class AggroSystem : MonoBehaviour
 
         //Priority 2 Target nearest player (detection aggro)
         _currentTarget = GetNearestPlayer();
-
     }
 
     private Transform GetNearestPlayer()

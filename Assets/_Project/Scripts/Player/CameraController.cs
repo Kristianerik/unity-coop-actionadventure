@@ -14,8 +14,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float sensitivityY = 0.1f;
 
     [Header("Vertical Clamp")]
-    [SerializeField] private float minTilt = -20f;
-    [SerializeField] private float maxTilt = 45f;
+    [SerializeField] private float minTilt = -60f;
+    [SerializeField] private float maxTilt = 60f;
 
     private float _yaw;
     private float _pitch;

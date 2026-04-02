@@ -19,20 +19,23 @@ public class SwordThrowAbility : AbilityBase
         if (_swordOut) return;
 
         _swordOut = true;
-        Debug.Log($"Hiding sword visual: {swordVisual}");
 
         // Hide sword on player
         if (swordVisual != null) swordVisual.SetActive(false);
 
-        Vector3 spawnPosition = _owner.transform.position + Vector3.up * 1.2f + _owner.transform.forward;
+        // Get aim direction from player controller
+        PlayerController playerController = _owner.GetComponent<PlayerController>();
+        Vector3 aimDirection = playerController != null ? playerController.GetAimDirection() : _owner.transform.forward;
+
+        Vector3 spawnPosition = _owner.transform.position + Vector3.up * 1.2f + aimDirection;
 
         // Spawn thrown sword
-        GameObject thrown = Instantiate(thrownSwordPrefab, spawnPosition, _owner.transform.rotation);
+        GameObject thrown = Instantiate(thrownSwordPrefab, spawnPosition, Quaternion.LookRotation(aimDirection));
 
         ThrownSword thrownSword = thrown.GetComponent<ThrownSword>();
         if (thrownSword != null)
         {
-            thrownSword.Initialize(_owner, throwDamage, throwSpeed, maxRange, hitLayers);
+            thrownSword.Initialize(_owner, throwDamage, throwSpeed, maxRange, hitLayers, 1.2f, aimDirection);
             thrownSword.OnReturnedToOwner -= OnSwordReturned;
             thrownSword.OnReturnedToOwner += OnSwordReturned;
         }

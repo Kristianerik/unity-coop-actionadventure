@@ -34,6 +34,7 @@ public class RespawnSystem : MonoBehaviour
     {
         if (_isRespawning) return;
         _playerDeathState?.TriggerDeath();
+        _playerDeathState.OnDeathAnimationComplete -= StartRespawnCountdown; 
         _playerDeathState.OnDeathAnimationComplete += StartRespawnCountdown;
     }
 
