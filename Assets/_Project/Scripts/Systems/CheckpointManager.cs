@@ -11,6 +11,7 @@ public class CheckpointManager : MonoBehaviour
 
     private Checkpoint _currentCheckpoint;
     private List<RespawnSystem> _respawnSystems = new List<RespawnSystem>();
+    private GameStateSnapshot _snapshot = new GameStateSnapshot();
 
     private void Awake()
     {
@@ -31,15 +32,33 @@ public class CheckpointManager : MonoBehaviour
             RespawnSystem respawn = player.GetComponent<RespawnSystem>();
             if (respawn != null) _respawnSystems.Add(respawn);
         }
+
+        RegisterAllResettables();
+        _snapshot.TakeSnapshot();
+    }
+
+    private void RegisterAllResettables()
+    {
+        MonoBehaviour[] allObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+
+        foreach (var obj in allObjects)
+        {
+            if (obj is IResettable resettable) _snapshot.RegisterResettable(resettable);
+        }
+
+        Debug.Log($"Registered {allObjects.Length} resettable objects");
     }
 
     public void SetCheckpoint(Checkpoint checkpoint)
     {
         _currentCheckpoint = checkpoint;
-        Debug.Log($"Checkpoint set: {checkpoint.gameObject.name}");
+        
+        _snapshot.TakeSnapshot();
 
         // Update all respawn systems with new chepoint position
         foreach (var respawn in _respawnSystems) respawn.SetRespawnPoint(_currentCheckpoint.GetSpawnPoint());
+
+        Debug.Log($"Checkpoint set: {checkpoint.gameObject.name}");
     }
 
     public Transform GetCurrentSpawnPoint()
@@ -50,17 +69,13 @@ public class CheckpointManager : MonoBehaviour
 
     public void RestartFromCheckpoint()
     {
-        if(_currentCheckpoint == null)
-        {
-            Debug.Log("no checpoint set - restarting from default spawn");
-            RestartFromDefault();
-            return;
-        }
+        _snapshot.RestoreSnapshot();
 
         // Respawn all players at  checkpoint
         foreach (var respawn in _respawnSystems)
         {
-            respawn.SetRespawnPoint(_currentCheckpoint.GetSpawnPoint());
+            Transform spawnPoint = _currentCheckpoint != null ? _currentCheckpoint.GetSpawnPoint() : defaultSpawnPoint;
+            respawn.SetRespawnPoint(spawnPoint);
             respawn.ForceRespawn();
         }
 

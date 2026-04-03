@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Door : InteractableBase
+public class Door : InteractableBase, IResettable
 {
     
     [Header("Door Settings")]
@@ -17,6 +17,8 @@ public class Door : InteractableBase
     private Quaternion _openRotation;
     private bool _isMoving = false;
     private AudioSource _audioSource;
+    private bool _savedIsOpen;
+    private Quaternion _savedRotation;
 
     private void Awake()
     {
@@ -30,6 +32,21 @@ public class Door : InteractableBase
     {
         if (_isMoving) return;
         ToggleDoor();
+    }
+
+    public void SaveState()
+    {
+        _savedIsOpen = isOpen;
+        _savedRotation = transform.rotation;
+    }
+
+    public void RestoreState()
+    {
+        StopAllCoroutines();
+        isOpen = _savedIsOpen;
+        transform.rotation = _savedRotation;
+        _isMoving = false;
+        interactPrompt = isOpen ? "Press E to close door" : "Press E to open door";
     }
 
     private void ToggleDoor()

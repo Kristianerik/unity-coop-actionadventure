@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum PickupType { Health, Ammo, Item }
 
-public class Pickup : InteractableBase
+public class Pickup : InteractableBase, IResettable
 {
     
     [Header("Pickup Settings")]
@@ -12,10 +12,23 @@ public class Pickup : InteractableBase
     [SerializeField] private float respawnTime = 0f;
     [SerializeField] private GameObject visualObject;
 
+    private bool _savedIsInteractable;
+
     private void Awake()
     {
         interactPrompt= $"Press E to pick up {pickupType}";
         requiresBothPlayers = false;
+    }
+
+    public void SaveState()
+    {
+        _savedIsInteractable = isInteractable;
+    }
+
+    public void RestoreState()
+    {
+        isInteractable = _savedIsInteractable;
+        if (visualObject != null) visualObject.SetActive(isInteractable);
     }
 
     private void OnTriggerEnter(Collider other)
