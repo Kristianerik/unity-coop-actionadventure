@@ -476,6 +476,9 @@ GameObject:
   - component: {fileID: 4283008411089156668}
   - component: {fileID: 480360059178732911}
   - component: {fileID: 5598940795577321083}
+  - component: {fileID: 431402973212248767}
+  - component: {fileID: 2128077828507417331}
+  - component: {fileID: 6702613424901001007}
   m_Layer: 8
   m_Name: Player_Gunner
   m_TagString: Player
@@ -807,7 +810,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5089926643522916484}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnInteract
+        m_MethodName: OnQTEInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -954,6 +957,49 @@ MonoBehaviour:
   aimSpeed: 15
   minVerticalAngle: -60
   maxVerticalAngle: 60
+--- !u!114 &431402973212248767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558844051947698630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42b41e7dad7b2b146a43ecb9dd4be422, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathAnimationDuration: 2
+  playerVisual: {fileID: 5855663486112140809}
+--- !u!114 &2128077828507417331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558844051947698630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67bb66472ee8c44292e82642bf18e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRespawnTime: 10
+  respawnPoint: {fileID: 0}
+--- !u!114 &6702613424901001007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7558844051947698630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7a3a833428ec4ea7a21c77bd9eb45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeReductionPerSuccess: 1
+  qteWindowDuration: 1
+  maxQTEAttempts: 5
 --- !u!1 &7560554635445309516
 GameObject:
   m_ObjectHideFlags: 0

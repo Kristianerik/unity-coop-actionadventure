@@ -4,17 +4,20 @@ public class Checkpoint : MonoBehaviour
 {
     
     [Header("Checkpoint Settings")]
-    [SerializeField] private Transform spawnPoint;
     [SerializeField] private bool activateOnTrigger = true;
     [SerializeField] private GameObject activeVisual;
     [SerializeField] private GameObject inactiveVisual;
+
+    [Header("Spawn Points")]
+    [SerializeField] private Transform spawnPoint1;
+    [SerializeField] private Transform spawnPoint2;
 
     private bool _isActivated = false;
 
     private void Awake()
     {
         // If no spawn point assigned use this object's position
-        if (spawnPoint == null) spawnPoint = transform;
+        if (spawnPoint1 == null) spawnPoint1 = transform;
 
         UpdateVisuals();
     }
@@ -46,6 +49,10 @@ public class Checkpoint : MonoBehaviour
         if (inactiveVisual != null) inactiveVisual.SetActive(!_isActivated);
     }
 
-    public Transform GetSpawnPoint() => spawnPoint;
+    public Transform GetSpawnPoint(int playerIndex = 0) 
+    {
+        if (playerIndex == 1 && spawnPoint2 != null) return spawnPoint2;
+        return spawnPoint1;
+    }
     public bool IsActivated() => _isActivated;
 }

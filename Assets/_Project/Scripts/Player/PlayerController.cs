@@ -225,12 +225,13 @@ public class PlayerController : MonoBehaviour
         {
             interactionDetector?.OnInteractReleased();
         }
+    }
 
-        // Also trigger QTE if active
+
+    public void OnQTEInput(InputAction.CallbackContext context)
+    {
         if (context.performed)
-        {
             qteSystem?.OnQTEInput(context);
-        }
     }
 
     // Movement

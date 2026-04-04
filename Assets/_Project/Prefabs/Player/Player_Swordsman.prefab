@@ -664,7 +664,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8175858746134012976}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnInteract
+        m_MethodName: OnQTEInput
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

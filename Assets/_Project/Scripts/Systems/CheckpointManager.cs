@@ -7,7 +7,9 @@ public class CheckpointManager : MonoBehaviour
     public static CheckpointManager Instance { get; private set; }
 
     [Header("Settings")]
-    [SerializeField] private Transform defaultSpawnPoint;
+    [SerializeField] private Transform defaultSpawnPoint1;
+    [SerializeField] private Transform defaultSpawnPoint2;
+
 
     private Checkpoint _currentCheckpoint;
     private List<RespawnSystem> _respawnSystems = new List<RespawnSystem>();
@@ -27,8 +29,10 @@ public class CheckpointManager : MonoBehaviour
     private void Start()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log($"CheckpointManager found {players.Length} players");
         foreach (var player in players)
         {
+            Debug.Log($"Found player: {player.name}");
             RespawnSystem respawn = player.GetComponent<RespawnSystem>();
             if (respawn != null) _respawnSystems.Add(respawn);
         }
@@ -64,30 +68,36 @@ public class CheckpointManager : MonoBehaviour
     public Transform GetCurrentSpawnPoint()
     {
         if (_currentCheckpoint != null) return _currentCheckpoint.GetSpawnPoint();
-        return defaultSpawnPoint;
+        return defaultSpawnPoint1;
     }
 
     public void RestartFromCheckpoint()
     {
         _snapshot.RestoreSnapshot();
 
-        // Respawn all players at  checkpoint
-        foreach (var respawn in _respawnSystems)
+        // Spawn players side by side with offset
+        for (int i = 0; i < _respawnSystems.Count; i++)
         {
-            Transform spawnPoint = _currentCheckpoint != null ? _currentCheckpoint.GetSpawnPoint() : defaultSpawnPoint;
-            respawn.SetRespawnPoint(spawnPoint);
-            respawn.ForceRespawn();
+            Transform spawnPoint = GetSpawnPoint(i);
+            
+            _respawnSystems[i].SetRespawnPoint(spawnPoint);
+            _respawnSystems[i].ForceRespawn();
         }
 
-        Debug.Log($"Restarting from checkpoint: {_currentCheckpoint.gameObject.name}");
+        // Refresh all aggro systems
+        AggroSystem[] aggroSystems = FindObjectsByType<AggroSystem>(FindObjectsSortMode.None);
+        foreach (var aggro in aggroSystems) aggro.ForceRefresh();
     }
 
-    private void RestartFromDefault()
+    private Transform GetSpawnPoint(int playerIndex)
     {
-        foreach (var respawn in _respawnSystems)
-        {
-            if (defaultSpawnPoint != null) respawn.SetRespawnPoint(defaultSpawnPoint);
-            respawn.ForceRespawn();
-        }
+        if (_currentCheckpoint != null)
+            return _currentCheckpoint.GetSpawnPoint(playerIndex);
+
+        // Fall back to default spawn points
+        if (playerIndex == 1 && defaultSpawnPoint2 != null)
+            return defaultSpawnPoint2;
+
+        return defaultSpawnPoint1;
     }
 }

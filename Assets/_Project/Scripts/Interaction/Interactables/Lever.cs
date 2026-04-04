@@ -51,6 +51,16 @@ public class Lever : InteractableBase, IResettable
         base.OnInteract(detector);   
     }
 
+    private void OnValidate()
+    {
+        if (leverHandle != null)
+        {
+            leverHandle.localRotation = Quaternion.Euler(
+                isActivated ? activatedAngle : 0f, 0f, 0f
+            );
+        }
+    }
+
     protected override void Execute(InteractionDetector detector)
     {
         isActivated = !isActivated;
@@ -59,6 +69,9 @@ public class Lever : InteractableBase, IResettable
         if (leverHandle != null)
         {
             leverHandle.localRotation = Quaternion.Euler(isActivated ? activatedAngle : 0f, 0f, 0f);
+        } else
+        {
+            Debug.LogError("LeverHandle is null!");
         }
 
         if (isActivated)

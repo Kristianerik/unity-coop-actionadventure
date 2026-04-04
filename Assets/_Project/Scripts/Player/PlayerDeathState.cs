@@ -34,9 +34,8 @@ public class PlayerDeathState : MonoBehaviour
         _characterController.enabled = false;
 
         // Switch to QTE action map
-        UnityEngine.InputSystem.PlayerInput playerInput =
-            GetComponent<UnityEngine.InputSystem.PlayerInput>();
-        if (playerInput != null)
+        UnityEngine.InputSystem.PlayerInput playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        if (playerInput != null && playerInput.actions != null)
             playerInput.SwitchCurrentActionMap("QTE");
 
         WeaponHandler weaponHandler = GetComponent<WeaponHandler>();
@@ -59,7 +58,7 @@ public class PlayerDeathState : MonoBehaviour
         // Switch back to Player action map
         UnityEngine.InputSystem.PlayerInput playerInput =
             GetComponent<UnityEngine.InputSystem.PlayerInput>();
-        if (playerInput != null)
+        if (playerInput != null && playerInput.actions != null)
             playerInput.SwitchCurrentActionMap("Player");
 
         WeaponHandler weaponHandler = GetComponent<WeaponHandler>();

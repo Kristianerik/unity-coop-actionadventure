@@ -228,6 +228,15 @@ public class AggroSystem : MonoBehaviour
         }
     }
 
+    public void ForceRefresh()
+    {
+        _players.Clear();
+        _threatTable.Clear();
+        _currentTarget = null;
+        _isInCombat = false;
+        StartCoroutine(DelayedRefresh());
+    }
+
     public Transform GetCurrentTarget() => _currentTarget;
     public float GetDetectionRange() => detectionRange;
     public bool HasTarget() => _currentTarget != null;
