@@ -38,7 +38,13 @@ public class Checkpoint : MonoBehaviour
     {
         if (_isActivated) return;
         _isActivated = true;
-        CheckpointManager.Instance?.SetCheckpoint(this);
+
+        GameManager.Instance?.SetCheckpoint(
+            gameObject.name, 
+            spawnPoint1.position, 
+            spawnPoint2 != null ? spawnPoint2.position : spawnPoint1.position + Vector3.right * 1.5f
+        );
+        
         UpdateVisuals();
         Debug.Log($"Checkpoint activated: {gameObject.name}");
     }

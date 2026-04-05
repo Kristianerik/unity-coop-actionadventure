@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,7 +26,7 @@ public class CameraController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        _yaw = target.eulerAngles.y;
+        if (target == null) StartCoroutine(DelayedFindTarget());
     }
 
     public void OnLook(InputAction.CallbackContext context)
@@ -35,6 +36,8 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (target == null) return;
+
         HandleRotation();
         FollowTarget();
     }
@@ -44,6 +47,24 @@ public class CameraController : MonoBehaviour
         _yaw += _lookInput.x * sensitivityX;
         _pitch -= _lookInput.y * sensitivityY;
         _pitch = Mathf.Clamp(_pitch, minTilt, maxTilt);
+    }
+
+    private void FindTarget()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            target = player.transform;
+            _yaw = target.eulerAngles.y;
+            Debug.Log($"Camera target found: {target.name}");
+        }
+        else Debug.LogWarning("NoPlayerFound for camera!");
+    }
+
+    private IEnumerator DelayedFindTarget()
+    {
+        yield return null;
+        FindTarget();
     }
 
     private void FollowTarget()

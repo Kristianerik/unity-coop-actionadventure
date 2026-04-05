@@ -8,7 +8,7 @@ using Quaternion = UnityEngine.Quaternion;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(HealthSystem))]
 [RequireComponent(typeof(AggroSystem))]
-public class EnemyBase : MonoBehaviour, IResettable
+public class EnemyBase : MonoBehaviour
 {
     
     [Header("Detection")]
@@ -61,12 +61,6 @@ public class EnemyBase : MonoBehaviour, IResettable
     public Transform[] PatrolPoints => patrolPoints;
     public float PatrolWaitTime => patrolWaitTime;
 
-    // Saved state variables for checkpoint respawn
-    private Vector3 _savedPosition;
-    private Quaternion _savedRotation;
-    private float _savedHealth;
-    private IEnemyState _savedState;
-    private GameObject _prefabReference;
 
 
     public virtual void Awake()
@@ -125,55 +119,6 @@ public class EnemyBase : MonoBehaviour, IResettable
     {
         StateMachine.FixedUpdate();
     }
-
-    public void SaveState()
-    {
-        _savedPosition = transform.position;
-        _savedRotation = transform.rotation;
-        _savedHealth = Health.GetHealthPercent() * 100f;
-        _savedState = StateMachine.CurrentState;
-        Debug.Log($"{gameObject.name} state saved");
-    }
-
-    public void RestoreState()
-    {
-        // If this object was destroyed respawn it
-        if (this == null || gameObject == null)
-        {
-            if (_prefabReference != null)
-            {
-                GameObject newEnemy = Instantiate(
-                    _prefabReference,
-                    _savedPosition,
-                    _savedRotation
-                );
-                // Copy saved state to new instance
-                EnemyBase newBase = newEnemy.GetComponent<EnemyBase>();
-                if (newBase != null)
-                {
-                    newBase._savedPosition = _savedPosition;
-                    newBase._savedHealth = _savedHealth;
-                    newBase.RestoreState();
-                }
-            }
-            return;
-        }
-
-        // Restore existing enemy
-        transform.position = _savedPosition;
-        transform.rotation = _savedRotation;
-        Health.ResetHealth();
-        if (_savedHealth < 100f)
-            Health.TakeDamage(100f - _savedHealth, Vector3.zero);
-
-        Agent.enabled = true;
-        gameObject.SetActive(true);
-
-        if (_savedState != null)
-            StateMachine.ChangeState(_savedState);
-        else
-            StateMachine.Initialize(IdleState);
-    }
  
     protected virtual void OnDamageTaken(Vector3 Knockback)
     {
@@ -219,10 +164,5 @@ public class EnemyBase : MonoBehaviour, IResettable
     {
         if (!Aggro.HasTarget()) return true;
         return Vector3.Distance(transform.position, Aggro.GetCurrentTarget().position) > loseAggroRange;
-    }
-
-    public void SetPrefabReference(GameObject prefab)
-    {
-        _prefabReference = prefab;
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Lever : InteractableBase, IResettable
+public class Lever : InteractableBase
 {
     
     [Header("Lever Settings")]
@@ -14,28 +14,9 @@ public class Lever : InteractableBase, IResettable
     public UnityEvent OnActivated;
     public UnityEvent OnDeactivated;
 
-    private bool _savedIsActivated;
-
     private void Awake()
     {
         interactPrompt = holdTimeRequired > 0f ? $"Hold E for {holdTimeRequired}s to activate" : "Press E to activate lever";
-    }
-
-    public void SaveState()
-    {
-        _savedIsActivated = isActivated;
-    }
-
-    public void RestoreState()
-    {
-        isActivated = _savedIsActivated;
-
-        if (leverHandle != null) leverHandle.localRotation = Quaternion.Euler(isActivated ? activatedAngle : 0f, 0f, 0f);
-
-        if (isActivated) OnActivated?.Invoke();
-        else OnDeactivated?.Invoke();
-
-        interactPrompt = isActivated ? "Press E to deactivate" : "Press E to activate lever";
     }
 
     public override void OnInteractHeld(InteractionDetector detector, float holdTime)

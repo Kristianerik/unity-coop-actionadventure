@@ -52,18 +52,15 @@ public class GameOverManager : MonoBehaviour
     private System.Collections.IEnumerator TriggerGameOver()
     {
         _isGameOver = true;
-        Debug.Log("Game Over! All players are dead.");
 
-        // SHow game over panel
+        // Show game over panel
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
 
         OnGameOver?.Invoke();
         yield return new WaitForSeconds(gameOverDelay);
-        CheckpointManager.Instance?.RestartFromCheckpoint();
-        _isGameOver = false;
-
-        // Hide game over panel
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        
+        // Reload scene
+        GameManager.Instance?.RestartFromCheckpoint();
     }
 
     public bool IsGameOver() => _isGameOver;
