@@ -31,6 +31,14 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Checkpoint set: {id} at positions {pos1} and {pos2}");
     }
 
+    public void ResetCheckpoint()
+    {
+        LastCheckpointID = string.Empty;
+        LastCheckpointPosition1 = Vector3.zero;
+        LastCheckpointPosition2 = Vector3.zero;
+        _hasCheckpoint = false;
+    }
+
     public void RestartFromCheckpoint()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
