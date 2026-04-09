@@ -60,6 +60,10 @@ public class PlayerController : MonoBehaviour
     // Combat
     private bool _isBlocking;
 
+    // Minigame
+
+    private MinigameBase _activeMinigame;
+
     // Double Tap
     private float _lastJumpTapTime = -1f;
     private bool _waitingForSecondTap = false;
@@ -164,6 +168,12 @@ public class PlayerController : MonoBehaviour
     public void OnLightAttack(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
+
+        if (_activeMinigame != null)
+        {
+            _activeMinigame.OnHit();
+            return;
+        }
         weaponHandler?.LightAttack(_moveInput);
     }
 
@@ -353,5 +363,10 @@ public class PlayerController : MonoBehaviour
     {
         if (_cameraTransform == null) return transform.forward;
         return _cameraTransform.forward;
+    }
+
+    public void SetMinigame(MinigameBase minigame)
+    {
+        _activeMinigame = minigame;
     }
 }
