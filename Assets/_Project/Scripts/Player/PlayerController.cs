@@ -169,11 +169,6 @@ public class PlayerController : MonoBehaviour
     {
         if (!context.performed) return;
 
-        if (_activeMinigame != null)
-        {
-            _activeMinigame.OnHit();
-            return;
-        }
         weaponHandler?.LightAttack(_moveInput);
     }
 
@@ -189,6 +184,12 @@ public class PlayerController : MonoBehaviour
         {
             weaponHandler?.CancelCharge();
         }
+    }
+
+    public void OnMinigameHit(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        _activeMinigame?.OnHit();
     }
 
     public void OnAbilityUse(InputAction.CallbackContext context)

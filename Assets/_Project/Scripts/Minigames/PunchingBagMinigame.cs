@@ -11,21 +11,24 @@ public class PunchingBagMinigame : MinigameBase
     
     
     [Header("Minigame Settings")]
-    [SerializeField] private float dialRotationSpeed = 90f;
+    [SerializeField] private float initialDialSpeed = 90f;
+    [SerializeField] private float dialSpeedIncrement = 5f;
+    [SerializeField] private float maxDialSpeed = 270f;
     [SerializeField] private float initialWindowSize = 60f;
-    [SerializeField] private float windowShrinkRate = 2f;
-    [SerializeField] private float minWindowSize = 15f;
+    [SerializeField] private float windowShrinkOnHit = 3f;
+    [SerializeField] private float windowGrowOnMiss = 10f;
+    [SerializeField] private float minWindowSize = 10f;
+    [SerializeField] private float maxWindowSize = 90f;
     [SerializeField] private float hitPower = 15f;
+    [SerializeField] private float missPenaltyPercent = 0.05f;
     [SerializeField] private float gameDuration = 45f;
-    [SerializeField] private TextMeshProUGUI timerText;
-    private float _timeRemaining;
-    private int _totalHits = 0;
 
     [Header("UI References")]
     [SerializeField] private GameObject minigameUI;
     [SerializeField] private RectTransform dialNeedle;
     [SerializeField] private RectTransform hitWindow;
     [SerializeField] private Image powerMeterFill;
+    [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI hitsText;
     [SerializeField] private TextMeshProUGUI ratingText;
@@ -35,8 +38,13 @@ public class PunchingBagMinigame : MinigameBase
     // State
     private bool _isActive = false;
     private float _dialAngle = 0f;
+    private float _currentDialSpeed;
     private float _currentWindowSize;
+    private float _currentWindowPosition = 270f;
     private float _powerMeter = 0f;
+    private float _timeRemaining;
+    private int _totalHits = 0;
+    private int _totalMisses = 0;
 
     private void Start()
     {
@@ -47,9 +55,13 @@ public class PunchingBagMinigame : MinigameBase
     {
         _isActive = true;
         _dialAngle = 0f;
+        _currentDialSpeed = initialDialSpeed;
         _currentWindowSize = initialWindowSize;
+        _currentWindowPosition = 270f;
         _powerMeter = 0f;
         _timeRemaining = gameDuration;
+        _totalHits = 0;
+        _totalMisses = 0;
 
         if (minigameUI != null) minigameUI.SetActive(true);
         if (resultsPanel != null) resultsPanel.SetActive(false);
@@ -62,14 +74,14 @@ public class PunchingBagMinigame : MinigameBase
     {
         while (_timeRemaining > 0 && _isActive)
         {
+            _timeRemaining -= Time.deltaTime;
+
             // Rotate dial
-            _dialAngle += dialRotationSpeed * Time.deltaTime;
+            _dialAngle += _currentDialSpeed * Time.deltaTime;
             if (_dialAngle >= 360f) _dialAngle -= 360f;
 
-            // Shrink window over time
-            _currentWindowSize = Mathf.Max(minWindowSize, _currentWindowSize - windowShrinkRate * Time.deltaTime);
-
             UpdateDialVisual();
+            UpdateUI();
             yield return null;
         }
 
@@ -79,32 +91,37 @@ public class PunchingBagMinigame : MinigameBase
     public override void OnHit()
     {
         if (!_isActive) return;
-        TryHit(hitPower);
-    }
 
-    
-
-    private void TryHit(float power)
-    {
-        // Check if dial is in window
         float windowStart = GetWindowStartAngle();
-        float windowEnd= windowStart +_currentWindowSize;
+        float windowEnd = windowStart + _currentWindowSize;
         bool inWindow = IsAngleInWindow(_dialAngle, windowStart, windowEnd);
 
         if (inWindow)
         {
-            // Scale power by how centered the hit is
-            float windowCenter = windowStart + (_currentWindowSize * 0.5f);
-            float distanceFromCenter = Mathf.Abs(_dialAngle - windowCenter);
-            float accuracy = 1f - (distanceFromCenter / (_currentWindowSize * 0.5f));
-            float actualPower = power * accuracy;
-            _powerMeter += actualPower;
+            // Hit in window - build power
+            _powerMeter += hitPower;
             _totalHits++;
-            Debug.Log($"Hit! Power: {actualPower:0.0} | Accuracy: {accuracy: 0.0%}");
+
+            // Shrink window and speed up needle
+            _currentWindowSize = Mathf.Max(minWindowSize, _currentWindowSize - windowShrinkOnHit);
+            _currentDialSpeed = Mathf.Min(maxDialSpeed, _currentDialSpeed + dialSpeedIncrement);
+
+            Debug.Log($"Hit! Power: {_powerMeter:0.0} | Speed: {_currentDialSpeed:0.0} | Window: {_currentWindowSize:0.0}");
         }
         else
         {
-            Debug.Log("Miss!");
+            // Miss - penalty and window grows and moves
+            float penalty = _powerMeter * missPenaltyPercent;
+            _powerMeter = Mathf.Max(0f, _powerMeter - penalty);
+            _totalMisses++;
+
+            // Grow window
+            _currentWindowSize = Mathf.Min(maxWindowSize, _currentWindowSize + windowGrowOnMiss);
+
+            // Move window to random position 
+            _currentWindowPosition = UnityEngine.Random.Range(0f, 360f);
+
+            Debug.Log($"Miss! Penalty: {penalty:0.0} | New power: {_powerMeter:0.0} | Window moved to: {_currentWindowPosition:0.0}");
         }
 
         UpdateUI();
@@ -121,8 +138,7 @@ public class PunchingBagMinigame : MinigameBase
 
     private float GetWindowStartAngle()
     {
-        // Window pos is fixed at top of dial 270 degrees
-        return 270f - (_currentWindowSize * 0.5f);
+        return _currentWindowPosition - (_currentWindowSize * 0.5f);
     }
 
     private void UpdateDialVisual()
@@ -133,6 +149,9 @@ public class PunchingBagMinigame : MinigameBase
         // Update window size
         if (hitWindow != null)
         {
+            // Rotate window to current position
+            hitWindow.localRotation = Quaternion.Euler(0f, 0f, -_currentWindowPosition);
+
             // Update window arc visual
             Image windowImage = hitWindow.GetComponent<Image>();
             if (windowImage != null) windowImage.fillAmount = _currentWindowSize / 360f;
@@ -155,15 +174,15 @@ public class PunchingBagMinigame : MinigameBase
 
         // Calculate score
         int finalScore = Mathf.RoundToInt(_powerMeter);
-         string rating = GetRating(finalScore);
+        string rating = GetRating(finalScore);
 
          // Show results
          if (scoreText != null) scoreText.text = $"{finalScore:0000}";
          if (ratingText != null) ratingText.text = rating;
-         if (hitsText != null) hitsText.text = $"Hits: {_totalHits}";
+         if (hitsText != null) hitsText.text = $"Hits: {_totalHits} | Misses: {_totalMisses}";
          if (resultsPanel != null) resultsPanel.SetActive(true);
 
-         Debug.Log($"Minigame complete: Score: {finalScore} | Rating: {rating} | Hits: {_totalHits}");
+         Debug.Log($"Minigame complete: Score: {finalScore} | Rating: {rating} | Hits: {_totalHits} | Misses: {_totalMisses}");
          OnMinigameComplete?.Invoke(finalScore);
     }
 

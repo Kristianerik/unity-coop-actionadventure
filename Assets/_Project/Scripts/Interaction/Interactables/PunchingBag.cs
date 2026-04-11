@@ -45,7 +45,24 @@ public class PunchingBag : InteractableBase
         WeaponHandler weaponHandler = _currentPlayer.GetComponent<WeaponHandler>();
         if (weaponHandler != null) weaponHandler.enabled = false;
 
-        //_currentPlayer.SetMinigame(minigame);
+        // Switch to minigame action map
+        UnityEngine.InputSystem.PlayerInput playerInput = _currentPlayer.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+        if (playerInput != null && playerInput.actions != null) playerInput.SwitchCurrentActionMap("Minigame");
+
+        _currentPlayer.SetMinigame(minigame);
+    }
+
+    private void RestorePlayerInput()
+    {
+        WeaponHandler weaponHandler = _currentPlayer.GetComponent<WeaponHandler>();
+        if (weaponHandler != null) weaponHandler.enabled = true;
+
+        // Switch back to Player action map
+        UnityEngine.InputSystem.PlayerInput playerInput = _currentPlayer.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+
+        if (playerInput != null && playerInput.actions != null) playerInput.SwitchCurrentActionMap("Player");
+
+        _currentPlayer.SetMinigame(null);
     }
 
     private void HandleMinigameComplete(int score)
@@ -63,13 +80,5 @@ public class PunchingBag : InteractableBase
         RestorePlayerInput();
         minigame.OnMinigameComplete -= HandleMinigameComplete;
         interactPrompt = "Press E to use punching bag";
-    }
-
-    private void RestorePlayerInput()
-    {
-        WeaponHandler weaponHandler = _currentPlayer.GetComponent<WeaponHandler>();
-        if (weaponHandler != null) weaponHandler.enabled = true;
-
-        //_currentPlayer.SetMinigame(null);
     }
 }

@@ -1010,6 +1010,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Minigame",
+            "id": "0ae8f940-f7ef-4a10-b857-967ee8c0374e",
+            "actions": [
+                {
+                    "name": "MinigameHit",
+                    "type": "Button",
+                    "id": "6981a6f5-9b36-443c-bb8c-fc8e3923a9ef",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "33680cf6-4026-443f-9771-7cc7bb8075df",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MinigameHit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30f35e9c-c947-4bb7-a6a3-97ccce386c40",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MinigameHit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

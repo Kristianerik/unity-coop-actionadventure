@@ -12,8 +12,7 @@ public abstract class MinigameBase : MonoBehaviour
 
     protected void StartMinigameCoroutine(System.Collections.IEnumerator routine)
     {
-        if (_activeCoroutine != null)
-            StopCoroutine(_activeCoroutine);
+        if (_activeCoroutine != null) StopCoroutine(_activeCoroutine);
         _activeCoroutine = StartCoroutine(routine);
     }
 
