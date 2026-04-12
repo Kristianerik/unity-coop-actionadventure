@@ -32,8 +32,19 @@ public class PunchingBagMinigame : MinigameBase
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI hitsText;
     [SerializeField] private TextMeshProUGUI ratingText;
+    [SerializeField] private TextMeshProUGUI bestStreakText;
     [SerializeField] private GameObject resultsPanel;
     [SerializeField] private float powerDisplayCap = 500f;
+
+    [Header("Streak Settings")]
+    [SerializeField] private TextMeshProUGUI streakText;
+    [SerializeField] private int[] streakMilestones = { 5, 10, 15, 20 };
+    [SerializeField] private Color[] streakColors = {
+        Color.white,
+        Color.yellow,
+        new Color(1f, 0.5f, 0f), // orange
+        Color.red
+    };
 
     // State
     private bool _isActive = false;
@@ -45,6 +56,8 @@ public class PunchingBagMinigame : MinigameBase
     private float _timeRemaining;
     private int _totalHits = 0;
     private int _totalMisses = 0;
+    private int _currentStreak = 0;
+    private int _bestStreak = 0;
 
     private void Start()
     {
@@ -105,8 +118,9 @@ public class PunchingBagMinigame : MinigameBase
             // Shrink window and speed up needle
             _currentWindowSize = Mathf.Max(minWindowSize, _currentWindowSize - windowShrinkOnHit);
             _currentDialSpeed = Mathf.Min(maxDialSpeed, _currentDialSpeed + dialSpeedIncrement);
+            UpdateStreak(true);
 
-            Debug.Log($"Hit! Power: {_powerMeter:0.0} | Speed: {_currentDialSpeed:0.0} | Window: {_currentWindowSize:0.0}");
+            Debug.Log($"Hit! Power: {_powerMeter:0.0} | Speed: {_currentDialSpeed:0.0} | Window: {_currentWindowSize:0.0} | Streak: {_currentStreak}");
         }
         else
         {
@@ -120,11 +134,81 @@ public class PunchingBagMinigame : MinigameBase
 
             // Move window to random position 
             _currentWindowPosition = UnityEngine.Random.Range(0f, 360f);
+            UpdateStreak(false);
 
             Debug.Log($"Miss! Penalty: {penalty:0.0} | New power: {_powerMeter:0.0} | Window moved to: {_currentWindowPosition:0.0}");
         }
 
         UpdateUI();
+    }
+
+    private void UpdateStreak(bool hit)
+    {
+        if (hit)
+        {
+            _currentStreak++;
+            _bestStreak = Mathf.Max(_bestStreak, _currentStreak);
+            UpdateStreakUI();
+        }
+        else
+        {
+            _currentStreak = 0;
+            if (streakText != null)
+            {
+                streakText.text = "";
+                streakText.transform.localScale = Vector3.one;
+            }
+        }
+    }
+
+    private void UpdateStreakUI()
+    {
+        if (streakText == null) return;
+
+        // Find which milestone we're at
+        int milestoneIndex = 0;
+        for (int i = streakMilestones.Length - 1; i >= 0; i--)
+        {
+            if (_currentStreak >= streakMilestones[i])
+            {
+                milestoneIndex = i;
+                break;
+            }
+        }
+
+        // Update text
+        streakText.text = $"x{_currentStreak} STREAK!";
+
+        // Update color based on milestone
+        streakText.color = streakColors[Mathf.Min(
+            milestoneIndex, streakColors.Length - 1)];
+
+        // Scale up at milestones
+        float targetScale = 1f + (milestoneIndex * 0.15f);
+        streakText.transform.localScale = Vector3.one * targetScale;
+
+        // Shake at milestones
+        if (_currentStreak % 5 == 0)
+            StartCoroutine(ShakeText(streakText));
+    }
+
+    private IEnumerator ShakeText(TextMeshProUGUI text)
+    {
+        Vector3 originalPos = text.transform.localPosition;
+        float elapsed = 0f;
+        float duration = 0.3f;
+        float magnitude = 5f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float x = originalPos.x + UnityEngine.Random.Range(-magnitude, magnitude);
+            float y = originalPos.y + UnityEngine.Random.Range(-magnitude, magnitude);
+            text.transform.localPosition = new Vector3(x, y, originalPos.z);
+            yield return null;
+        }
+
+        text.transform.localPosition = originalPos;
     }
 
     private bool IsAngleInWindow(float angle, float start, float end)
@@ -160,10 +244,34 @@ public class PunchingBagMinigame : MinigameBase
 
     private void UpdateUI()
     {
-        // Update power meter
-        if (powerMeterFill != null) powerMeterFill.fillAmount = Mathf.Clamp01(_powerMeter / powerDisplayCap);
+        if (powerMeterFill != null)
+        {
+            float fillAmount = Mathf.Clamp01(_powerMeter / powerDisplayCap);
+            powerMeterFill.fillAmount = fillAmount;
 
-        // Update timer
+            Color meterColor;
+            if (fillAmount < 0.5f)
+            {
+                // Yellow to orange (0% to 50%)
+                meterColor = Color.Lerp(
+                    Color.yellow,
+                    new Color(1f, 0.5f, 0f), 
+                    fillAmount * 2f
+                );
+            }
+            else
+            {
+                // Orange to red (50% to 100%)
+                meterColor = Color.Lerp(
+                    new Color(1f, 0.5f, 0f), 
+                    Color.red,
+                    (fillAmount - 0.5f) * 2f
+                );
+            }
+
+            powerMeterFill.color = meterColor;
+        }
+
         if (timerText != null) timerText.text = $"{_timeRemaining:0.0}s";
     }
 
@@ -180,9 +288,10 @@ public class PunchingBagMinigame : MinigameBase
          if (scoreText != null) scoreText.text = $"{finalScore:0000}";
          if (ratingText != null) ratingText.text = rating;
          if (hitsText != null) hitsText.text = $"Hits: {_totalHits} | Misses: {_totalMisses}";
+         if (bestStreakText != null) bestStreakText.text = $"Best Streak: {_bestStreak}";
          if (resultsPanel != null) resultsPanel.SetActive(true);
 
-         Debug.Log($"Minigame complete: Score: {finalScore} | Rating: {rating} | Hits: {_totalHits} | Misses: {_totalMisses}");
+         Debug.Log($"Minigame complete: Score: {finalScore} | Rating: {rating} | Hits: {_totalHits} | Misses: {_totalMisses} | Best Streak: {_bestStreak}");
          OnMinigameComplete?.Invoke(finalScore);
     }
 
