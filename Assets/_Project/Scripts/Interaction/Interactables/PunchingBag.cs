@@ -1,13 +1,16 @@
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem.Interactions;
+using Debug = UnityEngine.Debug;
 
 public class PunchingBag : InteractableBase
 {
     
+    private enum MinigameState { Inactive, Playing, ShowingResults }
+    private MinigameState _state = MinigameState.Inactive;  
+
     [SerializeField] private PunchingBagMinigame minigame;
     private PlayerController _currentPlayer;
-    private bool _minigameActive = false;
 
     private void Awake()
     {
@@ -16,25 +19,23 @@ public class PunchingBag : InteractableBase
 
     protected override void Execute(InteractionDetector detector)
     {
-        if (_minigameActive) return;
+        if (_state != MinigameState.Inactive) return;
 
         _currentPlayer = detector.Player;
-        _minigameActive = true;
+        _state = MinigameState.Playing;
 
-        // Switch player to minigame input
         SwitchToMinigameInput();
-
+        minigame.FindUIForPlayer(_currentPlayer.gameObject);
         minigame.StartMinigame();
         minigame.OnMinigameComplete += HandleMinigameComplete;
-
-        interactPrompt = "Press E to stop"; 
+        interactPrompt = "Press E to stop";
     }
 
     public override void OnInteract(InteractionDetector detector)
     {
-        if (_minigameActive)
+        if (_state == MinigameState.Playing)
         {
-            StopMinigame();
+            ForceStop();
             return;
         }
         base.OnInteract(detector);
@@ -67,18 +68,15 @@ public class PunchingBag : InteractableBase
 
     private void HandleMinigameComplete(int score)
     {
-        _minigameActive = false;
-        RestorePlayerInput();
+        _state = MinigameState.ShowingResults;
         minigame.OnMinigameComplete -= HandleMinigameComplete;
-        interactPrompt = "Press E to use punching bag";
     }
-
-    private void StopMinigame()
+    public void ForceStop()
     {
-        _minigameActive = false;
+        if (_state == MinigameState.Inactive) return;
+        _state = MinigameState.Inactive;
         minigame.StopMinigame();
         RestorePlayerInput();
-        minigame.OnMinigameComplete -= HandleMinigameComplete;
         interactPrompt = "Press E to use punching bag";
     }
 }

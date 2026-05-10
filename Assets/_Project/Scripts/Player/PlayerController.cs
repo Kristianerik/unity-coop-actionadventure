@@ -192,6 +192,17 @@ public class PlayerController : MonoBehaviour
         _activeMinigame?.OnHit();
     }
 
+    public void OnMinigameExit(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        if (_activeMinigame != null)
+        {
+            // Tell the bag to stop the minigame
+            PunchingBag bag = FindFirstObjectByType<PunchingBag>();
+            bag?.ForceStop();
+        }
+    }
+
     public void OnAbilityUse(InputAction.CallbackContext context)
     {
         if (!context.performed) return;

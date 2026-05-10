@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
+using Random = UnityEngine.Random;
 
 public class PunchingBagMinigame : MinigameBase
 {
@@ -24,17 +26,18 @@ public class PunchingBagMinigame : MinigameBase
     [SerializeField] private float gameDuration = 45f;
 
     [Header("UI References")]
-    [SerializeField] private GameObject minigameUI;
-    [SerializeField] private RectTransform dialNeedle;
-    [SerializeField] private RectTransform hitWindow;
-    [SerializeField] private Image powerMeterFill;
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI hitsText;
-    [SerializeField] private TextMeshProUGUI ratingText;
-    [SerializeField] private TextMeshProUGUI bestStreakText;
-    [SerializeField] private GameObject resultsPanel;
-    [SerializeField] private float powerDisplayCap = 500f;
+    private GameObject minigameUI;
+    private RectTransform dialNeedle;
+    private RectTransform hitWindow;
+    private Image powerMeterFill;
+    private TextMeshProUGUI timerText;
+    private TextMeshProUGUI scoreText;
+    private TextMeshProUGUI hitsText;
+    private TextMeshProUGUI ratingText;
+    private TextMeshProUGUI bestStreakText;
+    private TextMeshProUGUI exitPromptText;
+    private GameObject resultsPanel;
+    private float powerDisplayCap = 500f;
 
     [Header("Streak Settings")]
     [SerializeField] private TextMeshProUGUI streakText;
@@ -45,6 +48,16 @@ public class PunchingBagMinigame : MinigameBase
         new Color(1f, 0.5f, 0f), // orange
         Color.red
     };
+
+    [Header("Miss Settings")]
+    [SerializeField] private float missCooldown = 0.5f;
+    [SerializeField] private float missShakeDuration = 0.3f;
+    [SerializeField] private float missShakeMagnitude = 10f;
+    [SerializeField] private float startupGraceDuration = .3f;
+    private float _missCooldownTimer = 0f;
+    private bool _inMissCooldown = false;
+    private bool _startupGrace = false;
+    private float _startupGraceTimer = 0f;
 
     // State
     private bool _isActive = false;
@@ -61,7 +74,62 @@ public class PunchingBagMinigame : MinigameBase
 
     private void Start()
     {
+        if (minigameUI != null) FindUIReferences();
+
         if (minigameUI != null) minigameUI.SetActive(false);
+    }
+
+    private void FindUIReferences()
+    {
+        GameObject ui = GameObject.Find("PunchingBagUI");
+        if (ui != null)
+        {
+            minigameUI = ui;
+            dialNeedle = ui.transform.Find("Dial/DialNeedle") as RectTransform;
+            hitWindow = ui.transform.Find("Dial/HitWindow") as RectTransform;
+            powerMeterFill = ui.transform.Find("PowerMeter/PowerMeterFill").GetComponent<Image>();
+            timerText = ui.transform.Find("TimerText").GetComponent<TextMeshProUGUI>();
+            scoreText = ui.transform.Find("ResultsPanel/ScoreText").GetComponent<TextMeshProUGUI>();
+            ratingText = ui.transform.Find("ResultsPanel/RatingText").GetComponent<TextMeshProUGUI>();
+            hitsText = ui.transform.Find("ResultsPanel/HitsText").GetComponent<TextMeshProUGUI>();
+            bestStreakText = ui.transform.Find("ResultsPanel/BestStreakText").GetComponent<TextMeshProUGUI>();
+            exitPromptText = ui.transform.Find("ExitPromptText").GetComponent<TextMeshProUGUI>();
+            streakText = ui.transform.Find("StreakText").GetComponent<TextMeshProUGUI>();
+            resultsPanel = ui.transform.Find("ResultsPanel").gameObject;
+        }
+        else Debug.LogWarning("PunchingBagUI not found in scene!");
+    }
+
+    public void FindUIForPlayer(GameObject player)
+    {
+        // Find PunchingBagUI on this player's canvas
+        Transform playerCanvas = player.transform.Find("PlayerCanvas");
+        if (playerCanvas == null)
+        {
+            Debug.LogWarning("PlayerCanvas not found on player!");
+            return;
+        }
+
+        Transform ui = playerCanvas.Find("PunchingBagUI");
+        if (ui != null)
+        {
+            minigameUI = ui.gameObject;
+            dialNeedle = ui.Find("Dial/DialNeedle") as RectTransform;
+            hitWindow = ui.Find("Dial/HitWindow") as RectTransform;
+            powerMeterFill = ui.transform.Find("PowerMeter/PowerMeterFill").GetComponent<Image>();
+            timerText = ui.transform.Find("TimerText").GetComponent<TextMeshProUGUI>();
+            scoreText = ui.transform.Find("ResultsPanel/ScoreText").GetComponent<TextMeshProUGUI>();
+            ratingText = ui.transform.Find("ResultsPanel/RatingText").GetComponent<TextMeshProUGUI>();
+            hitsText = ui.transform.Find("ResultsPanel/HitsText").GetComponent<TextMeshProUGUI>();
+            bestStreakText = ui.transform.Find("ResultsPanel/BestStreakText").GetComponent<TextMeshProUGUI>();
+            exitPromptText = ui.transform.Find("ExitPromptText").GetComponent<TextMeshProUGUI>();
+            streakText = ui.transform.Find("StreakText").GetComponent<TextMeshProUGUI>();
+            resultsPanel = ui.transform.Find("ResultsPanel").gameObject;
+
+            Debug.Log($"UI found for player: {player.name}");
+        } 
+        else Debug.LogWarning($"PunchingBagUI not found on {player.name}!");    
+        
     }
 
     public override void StartMinigame()
@@ -70,13 +138,19 @@ public class PunchingBagMinigame : MinigameBase
         _dialAngle = 0f;
         _currentDialSpeed = initialDialSpeed;
         _currentWindowSize = initialWindowSize;
-        _currentWindowPosition = 270f;
+        _currentWindowPosition = (_dialAngle + 45f) % 360f;
         _powerMeter = 0f;
         _timeRemaining = gameDuration;
         _totalHits = 0;
         _totalMisses = 0;
+        _inMissCooldown = false;
+        _missCooldownTimer = 0f;
+        _startupGrace = true;
+        _startupGraceTimer = startupGraceDuration;
+
 
         if (minigameUI != null) minigameUI.SetActive(true);
+        if (exitPromptText != null) exitPromptText.text = "Press ESCAPE to exit";
         if (resultsPanel != null) resultsPanel.SetActive(false);
 
         UpdateUI();
@@ -88,6 +162,20 @@ public class PunchingBagMinigame : MinigameBase
         while (_timeRemaining > 0 && _isActive)
         {
             _timeRemaining -= Time.deltaTime;
+
+            // Tick startup grace
+            if (_startupGrace)
+            {
+                _startupGraceTimer -= Time.deltaTime;
+                if (_startupGraceTimer <= 0f) _startupGrace = false;
+            }
+
+            // Tick miss cooldown
+            if (_inMissCooldown)
+            {
+                _missCooldownTimer -= Time.deltaTime;
+                if (_missCooldownTimer <= 0f) _inMissCooldown = false;
+            }
 
             // Rotate dial
             _dialAngle += _currentDialSpeed * Time.deltaTime;
@@ -104,13 +192,20 @@ public class PunchingBagMinigame : MinigameBase
     public override void OnHit()
     {
         if (!_isActive) return;
+        if (_startupGrace) return;  
 
+        // Sample current angle at exact moment of input
         float windowStart = GetWindowStartAngle();
         float windowEnd = windowStart + _currentWindowSize;
         bool inWindow = IsAngleInWindow(_dialAngle, windowStart, windowEnd);
 
+
         if (inWindow)
         {
+            // Reset miss cooldown on successful hit
+            _inMissCooldown = false;
+            _missCooldownTimer = 0f;
+
             // Hit in window - build power
             _powerMeter += hitPower;
             _totalHits++;
@@ -119,24 +214,36 @@ public class PunchingBagMinigame : MinigameBase
             _currentWindowSize = Mathf.Max(minWindowSize, _currentWindowSize - windowShrinkOnHit);
             _currentDialSpeed = Mathf.Min(maxDialSpeed, _currentDialSpeed + dialSpeedIncrement);
             UpdateStreak(true);
-
-            Debug.Log($"Hit! Power: {_powerMeter:0.0} | Speed: {_currentDialSpeed:0.0} | Window: {_currentWindowSize:0.0} | Streak: {_currentStreak}");
         }
         else
         {
-            // Miss - penalty and window grows and moves
-            float penalty = _powerMeter * missPenaltyPercent;
-            _powerMeter = Mathf.Max(0f, _powerMeter - penalty);
-            _totalMisses++;
+            // Only apply penalty if not in grace period
+            if (!_inMissCooldown)
+            {
+                // Miss - penalty and window grows and moves
+                float penalty = _powerMeter * missPenaltyPercent;
+                _powerMeter = Mathf.Max(0f, _powerMeter - penalty);
+                _totalMisses++;
 
-            // Grow window
-            _currentWindowSize = Mathf.Min(maxWindowSize, _currentWindowSize + windowGrowOnMiss);
+                // Grow window
+                _currentWindowSize = Mathf.Min(maxWindowSize, _currentWindowSize + windowGrowOnMiss);
 
-            // Move window to random position 
-            _currentWindowPosition = UnityEngine.Random.Range(0f, 360f);
-            UpdateStreak(false);
+                // Move window to random position 
+                ResetWindowPosition();
+                UpdateStreak(false);
 
-            Debug.Log($"Miss! Penalty: {penalty:0.0} | New power: {_powerMeter:0.0} | Window moved to: {_currentWindowPosition:0.0}");
+                // Start grace period
+                _inMissCooldown = true;
+                _missCooldownTimer = missCooldown;
+
+                StartCoroutine(ShakeDial());
+
+                Debug.Log($"Miss! Penalty: {penalty:0.0} | New power: {_powerMeter:0.0} | Window moved to: {_currentWindowPosition:0.0}");
+            } 
+            else
+            {
+                Debug.Log("Miss ingorned - in grace period");
+            }
         }
 
         UpdateUI();
@@ -192,6 +299,41 @@ public class PunchingBagMinigame : MinigameBase
             StartCoroutine(ShakeText(streakText));
     }
 
+    private IEnumerator ShakeDial()
+    {
+        if (dialNeedle == null) 
+        { 
+            Debug.LogError("dialNeedle is null!"); 
+            yield break; 
+        }
+
+        Transform dialTransform = dialNeedle.parent;
+        Vector3 originalPos = dialTransform.localPosition;
+
+        // Flash background red
+        Image bgImage = dialTransform.Find("DialBackground").GetComponent<Image>();
+        Color originalColor = bgImage != null ? bgImage.color : Color.white;
+
+        if (bgImage != null)
+            bgImage.color = Color.red;
+
+        float elapsed = 0f;
+        while (elapsed < missShakeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float x = originalPos.x + Random.Range(-missShakeMagnitude, missShakeMagnitude);
+            float y = originalPos.y + Random.Range(-missShakeMagnitude, missShakeMagnitude);
+            dialTransform.localPosition = new Vector3(x, y, originalPos.z);
+            yield return null;
+        }
+
+        dialTransform.localPosition = originalPos;
+
+        // Restore background color
+        if (bgImage != null)
+            bgImage.color = originalColor;
+    }
+
     private IEnumerator ShakeText(TextMeshProUGUI text)
     {
         Vector3 originalPos = text.transform.localPosition;
@@ -213,16 +355,46 @@ public class PunchingBagMinigame : MinigameBase
 
     private bool IsAngleInWindow(float angle, float start, float end)
     {
-        if (end > 360f)
-        {
-            return angle >= start || angle <= end - 360f;
-        }
+        // Normalize all angles to 0-360
+        angle = (angle % 360f + 360f) % 360f;
+        start = (start % 360f + 360f) % 360f;
+        end = (end % 360f + 360f) % 360f;
+
+        if (end < start) return angle >= start || angle <= end;
         return angle >= start && angle <= end;
     }
 
     private float GetWindowStartAngle()
     {
-        return _currentWindowPosition - (_currentWindowSize * 0.5f);
+        float half = _currentWindowSize * 0.5f;
+        return (_currentWindowPosition - half + 360f) % 360f;
+    }
+
+    private void ResetWindowPosition()
+    {
+        float attempts = 0;
+        float newPosition;
+
+        do
+        {
+            newPosition = Random.Range(0f, 360f);
+            attempts++;
+
+            // Check if needle is inside new position
+            float start = (newPosition - _currentWindowSize * 0.5f + 360f) % 360f;
+            float end = (newPosition + _currentWindowSize * 0.5f) % 360f;
+            bool needleInside = IsAngleInWindow(_dialAngle, start, end);
+
+            if (!needleInside || attempts > 10)
+            {
+                _currentWindowPosition = newPosition;
+                return;
+            }
+
+        } while (attempts <= 10);
+
+        // Fallback: place window opposite to needle
+        _currentWindowPosition = (_dialAngle + 180f) % 360f;
     }
 
     private void UpdateDialVisual()
@@ -233,12 +405,14 @@ public class PunchingBagMinigame : MinigameBase
         // Update window size
         if (hitWindow != null)
         {
-            // Rotate window to current position
-            hitWindow.localRotation = Quaternion.Euler(0f, 0f, -_currentWindowPosition);
+            // Change minus to plus for correct direction
+            float rotationOffset = _currentWindowSize * 0.5f;
+            hitWindow.localRotation = Quaternion.Euler(
+                0f, 0f, -(_currentWindowPosition + rotationOffset));
 
-            // Update window arc visual
             Image windowImage = hitWindow.GetComponent<Image>();
-            if (windowImage != null) windowImage.fillAmount = _currentWindowSize / 360f;
+            if (windowImage != null)
+                windowImage.fillAmount = _currentWindowSize / 360f;
         }
     }
 
@@ -309,7 +483,8 @@ public class PunchingBagMinigame : MinigameBase
     public override void StopMinigame()
     {
         _isActive = false;
-        StopAllCoroutines();
+        StopMinigameCoroutine();
         if (minigameUI != null) minigameUI.SetActive(false);
+        if (resultsPanel != null) resultsPanel.SetActive(false);
     }
 }
